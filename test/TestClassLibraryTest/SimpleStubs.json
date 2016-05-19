@@ -1,0 +1,10 @@
+﻿{
+    "IgnoredProjects": [
+        "SimpleStubs",
+        "SimpleStubs.CodeGen"
+    ],
+    "IgnoredInterfaces": [
+        "TestClassLibrary.IIgnoredInterface"
+    ],
+    "StubInternalInterfaces": true
+}

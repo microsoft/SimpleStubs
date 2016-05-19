@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="Etg.SimpleStubs.CodeGen.Tasks.GenerateStubsTask" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\Etg.SimpleStubs.CodeGen.dll" />
+  
+  <PropertyGroup>
+	<SimpleStubsCodeGenBeforeTargets>BeforeBuild</SimpleStubsCodeGenBeforeTargets>
+  </PropertyGroup>
+  
+  <Target Name="SimpleStubsCodeGen" BeforeTargets="$(SimpleStubsCodeGenBeforeTargets)">
+    <GenerateStubsTask ProjectPath="$(ProjectDir)$(ProjectName)$(ProjectExt)" OutputPath="$(ProjectDir)Properties\SimpleStubs.generated.cs" />
+  </Target>
+</Project>

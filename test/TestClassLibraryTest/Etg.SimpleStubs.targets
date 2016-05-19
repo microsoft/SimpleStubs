@@ -1,0 +1,10 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="Etg.SimpleStubs.CodeGen.Tasks.GenerateStubsTask" AssemblyFile="$(ProjectDir)SimpleStubsDlls\Etg.SimpleStubs.CodeGen.dll" />
+  <Target Name="BeforeBuild">
+  <ItemGroup>
+      <SimpleStubsDlls Include="$(ProjectDir)..\..\src\SimpleStubs.CodeGen\bin\$(ConfigurationName)\**\*.dll" /> 
+   </ItemGroup>
+  <Copy SourceFiles="@(SimpleStubsDlls)" DestinationFolder="$(ProjectDir)SimpleStubsDlls\%(RecursiveDir)" ContinueOnError="true" Retries="0"/>
+    <GenerateStubsTask ProjectPath="$(ProjectDir)$(ProjectName).csproj" OutputPath="$(ProjectDir)Properties\SimpleStubs.generated.cs" />
+  </Target>
+</Project>
