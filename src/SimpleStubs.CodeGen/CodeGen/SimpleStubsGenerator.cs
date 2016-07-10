@@ -14,8 +14,9 @@ namespace Etg.SimpleStubs.CodeGen
 {
     internal class SimpleStubsGenerator
     {
-        IProjectStubber _projectStubber;
-        SimpleStubsConfig _config;
+        private IProjectStubber _projectStubber;
+        private SimpleStubsConfig _config;
+
         public SimpleStubsGenerator(IProjectStubber projectStubber, SimpleStubsConfig config)
         {
             _projectStubber = projectStubber;

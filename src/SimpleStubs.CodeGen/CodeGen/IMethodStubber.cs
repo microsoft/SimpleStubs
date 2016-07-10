@@ -3,8 +3,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Etg.SimpleStubs.CodeGen
 {
-    interface IMethodStubber
+    internal interface IMethodStubber
     {
-        ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface);
+        ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
+            INamedTypeSymbol stubbedInterface);
     }
 }

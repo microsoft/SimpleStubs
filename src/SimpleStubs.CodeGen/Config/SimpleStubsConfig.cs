@@ -2,9 +2,9 @@
 
 namespace Etg.SimpleStubs.CodeGen.Config
 {
-    class SimpleStubsConfig
+    internal class SimpleStubsConfig
     {
-        public SimpleStubsConfig(IEnumerable<string> ignoredProjects, 
+        public SimpleStubsConfig(IEnumerable<string> ignoredProjects,
             IEnumerable<string> ignoredInterfaces,
             bool stubInternalInterfaces)
         {
@@ -13,19 +13,10 @@ namespace Etg.SimpleStubs.CodeGen.Config
             StubInternalInterfaces = stubInternalInterfaces;
         }
 
-        public ISet<string> IgnoredProjects
-        {
-            get;
-        }
+        public ISet<string> IgnoredProjects { get; }
 
-        public ISet<string> IgnoredInterfaces
-        {
-            get;
-        }
+        public ISet<string> IgnoredInterfaces { get; }
 
-        public bool StubInternalInterfaces
-        {
-            get;
-        }
+        public bool StubInternalInterfaces { get; }
     }
 }

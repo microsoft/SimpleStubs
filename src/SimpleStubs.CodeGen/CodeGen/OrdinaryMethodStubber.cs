@@ -7,11 +7,12 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Etg.SimpleStubs.CodeGen
 {
-    class OrdinaryMethodStubber : IMethodStubber
+    internal class OrdinaryMethodStubber : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
+            INamedTypeSymbol stubbedInterface)
         {
-            if(!methodSymbol.IsOrdinaryMethod())
+            if (!methodSymbol.IsOrdinaryMethod())
             {
                 return classDclr;
             }
@@ -22,34 +23,31 @@ namespace Etg.SimpleStubs.CodeGen
                 RoslynUtils.GetMethodParameterSyntaxList(methodSymbol).ToArray()));
             methodDclr = methodDclr.WithSemicolonToken(SF.Token(SyntaxKind.None))
                 .WithExplicitInterfaceSpecifier(
-                SF.ExplicitInterfaceSpecifier(
-                    SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
-            if (methodSymbol.IsGenericMethod)
-            {
-                StatementSyntax stmtSyntax;
-                if (methodSymbol.ReturnsVoid)
-                {
-                    stmtSyntax = SF.ParseStatement("\n");
-                }
-                else
-                {
-                    stmtSyntax = SF.ParseStatement($"return default({methodSymbol.ReturnType.GetFullyQualifiedName()});\n");
-                }
+                    SF.ExplicitInterfaceSpecifier(
+                        SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
 
-                classDclr = classDclr.AddMembers(methodDclr.WithBody(SF.Block(stmtSyntax)));
-            }
-            else
+            string delegateTypeName = NamingUtils.GetDelegateTypeName(methodSymbol, stubbedInterface);
+            string parameters = string.Join(", ", methodSymbol.Parameters.Select(p =>
             {
-                string delegatePropertyName = NamingUtils.GetDelegatePropertyName(methodSymbol, stubbedInterface);
-                string callDelegateStmt = $"{delegatePropertyName}({string.Join(", ", methodSymbol.Parameters.Select(p => p.Name))});\n";
-                if (!methodSymbol.ReturnsVoid)
+                if (p.RefKind == RefKind.Out)
                 {
-                    callDelegateStmt = callDelegateStmt.Insert(0, "return ");
+                    return $"out {p.Name}";
                 }
+                if (p.RefKind == RefKind.Ref)
+                {
+                    return $"ref {p.Name}";
+                }
+                return p.Name;
+            }));
 
-                classDclr = classDclr.AddMembers(
-                    methodDclr.WithBody(SF.Block(SF.ParseStatement(callDelegateStmt))));
+            string callDelegateStmt = StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, parameters);
+            if (!methodSymbol.ReturnsVoid)
+            {
+                callDelegateStmt = callDelegateStmt.Insert(0, "return ");
             }
+
+            classDclr = classDclr.AddMembers(
+                methodDclr.WithBody(SF.Block(SF.ParseStatement(callDelegateStmt))));
 
             return classDclr;
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestClassLibrary
@@ -20,7 +22,18 @@ namespace TestClassLibrary
         event EventHandler<long> PhoneNumberChanged;
     }
 
-    
+    public interface IContainer
+    {
+        T GetElement<T>(int index);
+        void SetElement<T>(int index, T value);
+
+        bool GetElement(int index, out object value);
+    }
+
+    public interface IRefUtils
+    {
+        void Swap<T>(ref T v1, ref T v2);
+    }
 
     public interface ITestInterface : IDisposable
     {
@@ -32,6 +45,8 @@ namespace TestClassLibrary
 
         Task<List<int>> DoSomething(int parameter);
 
+        void SetDictionary(Dictionary<string, string> dict);
+
         string Prop1 { get; }
 
         string Prop2 { set; }
@@ -40,9 +55,9 @@ namespace TestClassLibrary
 
         event EventHandler<EventArgs> Changed;
 
-	    event EventHandler OtherEvent;
+        event EventHandler OtherEvent;
 
-        List<T> GetGenericList<T, A>();
+        List<T> GetGenericList<T>();
 
         void SetGenericValue<T>(T value);
     }
@@ -51,7 +66,7 @@ namespace TestClassLibrary
     {
     }
 
-    interface IInternalInterface
+    internal interface IInternalInterface
     {
         void DoSomethingInternal();
     }
@@ -61,4 +76,26 @@ namespace TestClassLibrary
         T GetX();
     }
 
+    public interface IInterfaceWithGenericMethod
+    {
+        T GetFoo<T>();
+    }
+
+    public class Stub : IInterfaceWithGenericMethod
+    {
+        private readonly Dictionary<string, object> _stubs = new Dictionary<string, object>();
+
+        public delegate T GetFooOfT_Delegate<T>();
+
+        public T GetFoo<T>()
+        {
+            return ((GetFooOfT_Delegate<T>) _stubs[nameof(GetFooOfT_Delegate<T>)]).Invoke();
+        }
+
+        public Stub SetupGetFooOfT<T>(GetFooOfT_Delegate<T> del)
+        {
+            _stubs[nameof(GetFooOfT_Delegate<T>)] = del;
+            return this;
+        }
+    }
 }

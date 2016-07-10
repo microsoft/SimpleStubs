@@ -18,15 +18,13 @@ namespace TestClassLibraryTest
             long number = 6041234567;
             string firstName = null;
             string lastName = null;
-            var stub = new StubIPhoneBook
+            var stub = new StubIPhoneBook();
+            stub.GetContactPhoneNumber((fn, ln) =>
             {
-                GetContactPhoneNumber_String_String = (fn, ln) =>
-                {
-                    firstName = fn;
-                    lastName = ln;
-                    return number;
-                }
-            };
+                firstName = fn;
+                lastName = ln;
+                return number;
+            });
             IPhoneBook phoneBook = stub;
             long actualNumber = phoneBook.GetContactPhoneNumber("John", "Smith");
             Assert.AreEqual(number, actualNumber);
@@ -39,14 +37,11 @@ namespace TestClassLibraryTest
         {
             long myNumber = 6041234567;
             long newNumber = 0;
-            var stub = new StubIPhoneBook
-            {
-                MyNumber_Get = () => myNumber,
-                MyNumber_Set = num =>
-                {
-                    newNumber = num;
-                }
-            };
+
+            var stub = new StubIPhoneBook()
+                .MyNumber_Get(() => myNumber)
+                .MyNumber_Set(value => newNumber = value);
+
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(myNumber, phoneBook.MyNumber);
             phoneBook.MyNumber = 13;
@@ -57,7 +52,7 @@ namespace TestClassLibraryTest
         public void TestPropertyStubWithGetterOnly()
         {
             int contactsCount = 55;
-            var stub = new StubIPhoneBook { ContactsCount_Get = () => contactsCount };
+            var stub = new StubIPhoneBook().ContactsCount_Get(() => contactsCount);
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(contactsCount, phoneBook.ContactsCount);
         }
@@ -71,10 +66,9 @@ namespace TestClassLibraryTest
             stub.PhoneNumberChanged += (s, num) =>
             {
                 sender = s;
-                newNumber = num; 
+                newNumber = num;
             }
-
-            ;
+                ;
             stub.PhoneNumberChanged_Raise(this, 55);
             Assert.AreEqual(55, newNumber);
             Assert.AreEqual(this, sender);
@@ -87,7 +81,7 @@ namespace TestClassLibraryTest
                 .Once((p1, p2) => 12345678) // first call
                 .Repeat((p1, p2) => 11122233, 2) // next two call
                 .Forever((p1, p2) => 22233556); // rest of the calls
-            var stub = new StubIPhoneBook { GetContactPhoneNumber_String_String = (p1, p2) => sequence.Next(p1, p2) };
+            var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => sequence.Next(p1, p2));
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(12345678, phoneBook.GetContactPhoneNumber("John", "Smith"));
             Assert.AreEqual(11122233, phoneBook.GetContactPhoneNumber("John", "Smith"));
@@ -99,15 +93,64 @@ namespace TestClassLibraryTest
             Assert.AreEqual(6, sequence.CallCount);
         }
 
+        [TestMethod]
+        public void TestGenericMethod()
+        {
+            int value = -1;
+            var stub = new StubIContainer()
+                .GetElement<int>(index => value)
+                .SetElement<int>((i, v) => { value = v; });
+
+            IContainer container = stub;
+            container.SetElement(0, 5);
+            Assert.AreEqual(5, container.GetElement<int>(1));
+        }
+
+        [TestMethod]
+        public void TestOutParameter()
+        {
+            object someObj = "test";
+            var stub = new StubIContainer()
+                .GetElement((int index, out object value) =>
+                {
+                    value = someObj;
+                    return true;
+                });
+
+            IContainer container = stub;
+            object result;
+            container.GetElement(0, out result);
+            Assert.AreEqual(someObj, result);
+        }
+
+        [TestMethod]
+        public void TestRefParameter()
+        {
+            var stub = new StubIRefUtils()
+                .Swap<int>((ref int v1, ref int v2) =>
+                {
+                    int temp = v1;
+                    v1 = v2;
+                    v2 = temp;
+                });
+
+            int i1 = 1;
+            int i2 = 2;
+
+            ((IRefUtils) stub).Swap<int>(ref i1, ref i2);
+            Assert.AreEqual(2, i1);
+            Assert.AreEqual(1, i2);
+        }
+
         // this test is only used for debugging
-        [Ignore]
         [TestMethod]
         public async Task TestGenerateStubs()
         {
             string path = //@"C:\projects\JasperMain\Product\Jasper.Test\Jasper.Test.csproj";
-            @"..\..\TestClassLibraryTest.csproj";
-                //"..\\..\\SimpleStubsTest.csproj";
-            SimpleStubsGenerator stubsGenerator = new DiModule(path, @"..\..\Properties\SimpleStubs.generated.cs").StubsGenerator;
+                @"..\..\TestClassLibraryTest.csproj";
+            //"..\\..\\SimpleStubsTest.csproj";
+            SimpleStubsGenerator stubsGenerator =
+                new DiModule(path, @"..\..\Properties\SimpleStubs.generated.cs").StubsGenerator;
             string stubs = await stubsGenerator.GenerateStubs(path);
             File.WriteAllText(@"..\..\Properties\SimpleStubs.generated.cs", stubs);
         }

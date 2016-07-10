@@ -7,10 +7,10 @@ using System.Collections.Generic;
 
 namespace Etg.SimpleStubs.CodeGen.Utils
 {
-    static class RoslynExtensions
+    internal static class RoslynExtensions
     {
         public static SymbolDisplayFormat QualifiedFormat = new SymbolDisplayFormat(
-                typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
 
         public static bool IsEvent(this IMethodSymbol methodSymbol)
         {
@@ -69,7 +69,10 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 
         public static string GetQualifiedName(this ITypeSymbol symbol)
         {
-            return symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries).Last();
+            return
+                symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                    .Split(new[] {"::"}, StringSplitOptions.RemoveEmptyEntries)
+                    .Last();
         }
 
         public static string GetMinimallyQualifiedName(this ITypeSymbol symbol)
@@ -84,7 +87,9 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 
         public static bool IsPublic(this TypeDeclarationSyntax typeDclr)
         {
-            return typeDclr.Modifiers.Any(modifier => modifier.RawKind.Equals(SyntaxFactory.Token(SyntaxKind.PublicKeyword).RawKind));
+            return
+                typeDclr.Modifiers.Any(
+                    modifier => modifier.RawKind.Equals(SyntaxFactory.Token(SyntaxKind.PublicKeyword).RawKind));
         }
 
         public static bool IsInternal(this TypeDeclarationSyntax typeDclr)
@@ -97,6 +102,5 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             };
             return !typeDclr.Modifiers.Any(modifier => nonInternalModifiers.Contains(modifier.RawKind));
         }
-
     }
 }

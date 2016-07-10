@@ -103,6 +103,7 @@
     <Compile Include="CodeGen\InterfaceStubber.cs" />
     <Compile Include="CodeGen\IProjectStubber.cs" />
     <Compile Include="CodeGen\ProjectStubber.cs" />
+    <Compile Include="Utils\StubbingUtils.cs" />
     <Compile Include="CodeGen\StubProjectResult.cs" />
     <Compile Include="Config\SimpleStubsConfig.cs" />
     <Compile Include="Config\ConfigLoader.cs" />
@@ -113,7 +114,7 @@
     <Compile Include="CodeGen\IMethodStubber.cs" />
     <Compile Include="CodeGen\OrdinaryMethodStubber.cs" />
     <Compile Include="CodeGen\PropertyStubber.cs" />
-    <Compile Include="CodeGen\StubbingPropertiesGenerator.cs" />
+    <Compile Include="CodeGen\StubbingDelegateGenerator.cs" />
     <Compile Include="CodeGen\SimpleStubsGenerator.cs" />
     <Compile Include="Utils\NamingUtils.cs" />
     <Compile Include="Utils\RoslynExtensions.cs" />

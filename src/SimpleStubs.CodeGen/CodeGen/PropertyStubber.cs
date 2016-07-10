@@ -9,19 +9,22 @@ namespace Etg.SimpleStubs.CodeGen
     using System.Linq;
     using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-    class PropertyStubber : IMethodStubber
+    internal class PropertyStubber : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
+            INamedTypeSymbol stubbedInterface)
         {
             if (!methodSymbol.IsPropertyAccessor())
             {
                 return classDclr;
             }
 
-            string delegatePropertyName = NamingUtils.GetDelegatePropertyName(methodSymbol, stubbedInterface);
+            string delegateTypeName = NamingUtils.GetDelegateTypeName(methodSymbol, stubbedInterface);
 
             string propName = methodSymbol.AssociatedSymbol.Name;
-            string propType = ((IPropertySymbol)methodSymbol.AssociatedSymbol).Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            string propType =
+                ((IPropertySymbol) methodSymbol.AssociatedSymbol).Type.ToDisplayString(
+                    SymbolDisplayFormat.FullyQualifiedFormat);
             var propDclr = GetPropDclr(classDclr, propName);
             if (propDclr == null)
             {
@@ -33,15 +36,19 @@ namespace Etg.SimpleStubs.CodeGen
             if (methodSymbol.IsPropertyGetter())
             {
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
-                    SF.List(new[] {
-                        SF.ReturnStatement(SF.IdentifierName(delegatePropertyName + "()")) })));
+                    SF.List(new[]
+                    {
+                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, ""))
+                    })));
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
             }
             else if (methodSymbol.IsPropertySetter())
             {
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration, SF.Block(
-                    SF.List(new[] {
-                        SF.ParseStatement($"{delegatePropertyName}(value);\n") })));
+                    SF.List(new[]
+                    {
+                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, "value"))
+                    })));
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
             }
 
@@ -63,7 +70,10 @@ namespace Etg.SimpleStubs.CodeGen
 
         private static PropertyDeclarationSyntax GetPropDclr(ClassDeclarationSyntax classDclr, string propName)
         {
-            return classDclr.DescendantNodes().OfType<PropertyDeclarationSyntax>().FirstOrDefault(p => p.Identifier.Text == propName);
+            return
+                classDclr.DescendantNodes()
+                    .OfType<PropertyDeclarationSyntax>()
+                    .FirstOrDefault(p => p.Identifier.Text == propName);
         }
     }
 }

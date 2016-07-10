@@ -29,28 +29,19 @@ public interface IPhoneBook
 
 ### Stubbing methods
 ```csharp
-var stub = new StubIPhoneBook
-{
-    GetContactPhoneNumber_String_String = (fn, ln) =>
-    {
-        return 6041234567;
-    }
-};
+var stub = new StubIPhoneBook().GetContactPhoneNumber((firstName, lastName) => 6041234567);
 ```
 
 You can also copy and verify the parameters values:
 ```csharp
 string firstName = null;
 string lastName = null;
-var stub = new StubIPhoneBook
+var stub = new StubIPhoneBook().GetContactPhoneNumber((fn, ln) =>
 {
-    GetContactPhoneNumber_String_String = (fn, ln) =>
-    {
-        firstName = fn;
-        lastName = ln;
-        return 6041234567;
-    }
-};
+    firstName = fn;
+    lastName = ln;
+    return number;
+});
 
 ClassUnderTest obj = new ClassUnderTest(stub);
 
@@ -60,18 +51,43 @@ Assert.AreEqual("John", firstName);
 Assert.AreEqual("Smith", lastName);
 ```
 
+### Out parameters
+```csharp
+object someObj = new Foo();
+var stub = new StubIContainer()
+    .GetElement((int index, out object value) =>
+    {
+        value = someObj;
+        return true;
+    });
+```
+
+### Ref parameters
+```csharp
+var stub = new StubIRefUtils()
+    .Swap<int>((ref int v1, ref int v2) =>
+    {
+        int temp = v1;
+        v1 = v2;
+        v2 = temp;
+    });
+```
+
+### Generic methods
+```csharp
+int value = -1;
+var stub = new StubIContainer()
+    .GetElement<int>(index => value)
+    .SetElement<int>((i, v) => { value = v; });
+```
+
 ## Stubbing properties
 
 ```csharp
 long myNumber = 6041234567;
-var stub = new StubIPhoneBook
-{
-    MyNumber_Get = () => myNumber,
-    MyNumber_Set = num =>
-    {
-        myNumber = num;
-    }
-};
+var stub = new StubIPhoneBook()
+    .MyNumber_Get(() => myNumber)
+    .MyNumber_Set(value => newNumber = value);
 ```
 
 ## Stubbing events
@@ -99,139 +115,12 @@ var sequence = StubsUtils.Sequence<Func<string, string, int>>()
     .Repeat((p1, p2) => 11122233, 3) // next three calls will return 11122233
     .Forever((p1, p2) => 22233556); // any subsequent call will return 22233556
     
-var stub = new StubIPhoneBook 
-{ 
-    // Get the next element from the sequence every time the method is called and invoke it
-    GetContactPhoneNumber_String_String = (p1, p2) => sequence.Next(p1, p2) 
-};
+var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => sequence.Next(p1, p2));
 
 // you can also verify how many times the sequence was called
 Assert.AreEqual(5, sequence.CallCount);
 ```
 
-
-## Full Example
-
-Let's look at how we can unit test the following class (`LocationManager`) using SimpleStubs.
-
-```csharp
-using System.Threading.Tasks;
-
-namespace HelloApp
-{
-    public class LocationManager
-    {
-        private readonly ILocationService _locationService;
-        public LocationManager(ILocationService locationService)
-        {
-            _locationService = locationService;
-        }
-
-        /// <returns>Current Location or null if the location could not be retrieved</returns>
-        public async Task<Location> GetCurrentLocation()
-        {
-            try
-            {
-                string location = await _locationService.GetLocation();
-                var ss = location.Split('/');
-                return new Location(ss[0], ss[1]);
-            }
-            catch (LocationServiceUnavailableException)
-            {
-                return null;
-            }
-        }
-
-        /// <returns>The current country code (e.g. US, CA) or null if the country code could not be retrieved</returns>
-        public async Task<string> GetCurrentCountryCode()
-        {
-            try
-            {
-                Location location = await GetCurrentLocation();
-                string loc = $"{location.Country}/{location.City}";
-                return await _locationService.GetCountryCode(loc);
-            }
-            catch (LocationServiceUnavailableException)
-            {
-                return null;
-            }
-        }
-    }
-}
-```
-
-The `ILocationService` interface is as follows:
-
-```csharp
-using System;
-using System.Threading.Tasks;
-
-namespace HelloApp
-{
-    public interface ILocationService
-    {
-        /// <returns>
-        /// the location in the format Country/City
-        /// </returns>
-        /// <exception cref="LocationServiceUnavailableException"></exception>
-        Task<string> GetLocation();
-
-        /// <returns>the country code of the given location</returns>
-        /// <exception cref="LocationServiceUnavailableException"></exception>
-        Task<string> GetCountryCode(string location);
-    }
-}
-```
-
-SimpleStubs will automatically generate a stub for `ILocationService` called StubILocationService. The following tests show how the stub can be used to unit test the `LocationManager` class:
-
-```csharp
-    [TestMethod]
-    public async Task TestGetCurrentLocation()
-    {
-        StubILocationService locationServiceStub = new StubILocationService
-        {
-            GetLocation = () => Task.FromResult("Canada/Vancouver")
-        };
-
-        LocationManager locationManager = new LocationManager(locationServiceStub);
-        Location location = await locationManager.GetCurrentLocation();
-
-        Assert.AreEqual("Canada", location.Country);
-        Assert.AreEqual("Vancouver", location.City);
-        Assert.AreEqual(1, locationServiceStub.ILocationService_GetLocation_CallCount);
-    }
-
-    [TestMethod]
-    public async Task TestThatGetCurrentLocationReturnsNullIfLocationServiceIsUnavailable()
-    {
-        StubILocationService locationServiceStub = new StubILocationService
-        {
-            GetLocation = () =>
-            {
-                throw new LocationServiceUnavailableException();
-            }
-        };
-
-        LocationManager locationManager = new LocationManager(locationServiceStub);
-        Assert.IsNull(await locationManager.GetCurrentLocation());
-        Assert.AreEqual(1, locationServiceStub.ILocationService_GetLocation_CallCount);
-    }
-
-    [TestMethod]
-    public async Task TestGetCurrentCountryCode()
-    {
-        StubILocationService locationServiceStub = new StubILocationService
-        {
-            GetLocation = () => Task.FromResult("Canada/Vancouver"),
-            GetCountryCode_String = location => Task.FromResult("CA")
-        };
-
-        LocationManager locationManager = new LocationManager(locationServiceStub);
-        Assert.AreEqual("CA", await locationManager.GetCurrentCountryCode());
-        Assert.AreEqual(1, locationServiceStub.ILocationService_GetCountryCode_String_CallCount);
-    }
-```
 ## Configuration
 
 SimpleStubs also supports an optional configuration file that can be added to the root of your test project. The configuration file (named `SimpleStubs.json`) has the following structure:
@@ -256,11 +145,9 @@ The configuration file allows you to instruct SimpleStubs to omit creating stubs
 It's also possible to instruct SimpleStubs to create stubs for internal interfaces (by default only public interfaces are stubbed) as shown in the configuration sample above.
 
 ## Current limitations
-* Methods signatures with pointers are not supported.
-* Generic methods are not supported (but generic interfaces are).
 * Only interfaces are stubbed.
+* Generic constrains are not supported.
 
 ## What if some stubs don't compile?
 
-Exclude the interface that is causing the problem (using the `SimpleStubs.json` configuration file) and report the problem.
-
+Exclude the interface that is causing the problem (using the `SimpleStubs.json` configuration file) and report the problem by opening an issue.

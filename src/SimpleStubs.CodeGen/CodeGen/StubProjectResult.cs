@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Etg.SimpleStubs.CodeGen.CodeGen
 {
-    class StubProjectResult
+    internal class StubProjectResult
     {
         public StubProjectResult(CompilationUnitSyntax cu, IEnumerable<string> usings)
         {
@@ -11,14 +11,8 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
             Usings = usings;
         }
 
-        public CompilationUnitSyntax CompilationUnit
-        {
-            get;
-        }
+        public CompilationUnitSyntax CompilationUnit { get; }
 
-        public IEnumerable<string> Usings
-        {
-            get;
-        }
+        public IEnumerable<string> Usings { get; }
     }
 }

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Etg.SimpleStubs.CodeGen.Config
 {
-    class ConfigLoader
+    internal class ConfigLoader
     {
         public SimpleStubsConfig LoadConfig(string configFilePath)
         {
@@ -13,7 +13,7 @@ namespace Etg.SimpleStubs.CodeGen.Config
                 return JsonConvert.DeserializeObject<SimpleStubsConfig>(File.ReadAllText(configFilePath));
             }
 
-            return new SimpleStubsConfig(new string[]{}, new string[]{}, false);
+            return new SimpleStubsConfig(new string[] {}, new string[] {}, false);
         }
     }
 }

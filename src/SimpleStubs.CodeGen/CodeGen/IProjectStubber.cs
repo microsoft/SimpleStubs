@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Etg.SimpleStubs.CodeGen.CodeGen
 {
-    interface IProjectStubber
+    internal interface IProjectStubber
     {
         Task<StubProjectResult> StubProject(Project project, CompilationUnitSyntax cu);
     }

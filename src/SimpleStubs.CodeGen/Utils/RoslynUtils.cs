@@ -7,7 +7,7 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Etg.SimpleStubs.CodeGen.Utils
 {
-    static class RoslynUtils
+    internal static class RoslynUtils
     {
         public static UsingDirectiveSyntax UsingDirective(string nameSpace)
         {
@@ -21,12 +21,15 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 
         public static ParameterSyntax CreateParameter(string type, string name)
         {
-            return SF.Parameter(new SyntaxList<AttributeListSyntax>(), new SyntaxTokenList(), SF.IdentifierName(type), SF.Identifier(new SyntaxTriviaList().Add(SF.Space), name, new SyntaxTriviaList()), null);
+            return SF.Parameter(new SyntaxList<AttributeListSyntax>(), new SyntaxTokenList(), SF.IdentifierName(type),
+                SF.Identifier(new SyntaxTriviaList().Add(SF.Space), name, new SyntaxTriviaList()), null);
         }
 
         public static BaseListSyntax BaseList(params string[] names)
         {
-            return SF.BaseList(SF.SeparatedList<BaseTypeSyntax>(names.Select(name => SF.SimpleBaseType(SF.IdentifierName(name)))));
+            return
+                SF.BaseList(
+                    SF.SeparatedList<BaseTypeSyntax>(names.Select(name => SF.SimpleBaseType(SF.IdentifierName(name)))));
         }
 
         public static List<ParameterSyntax> GetMethodParameterSyntaxList(IMethodSymbol methodSymbol)
@@ -34,7 +37,18 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             var paramsSyntaxList = new List<ParameterSyntax>();
             foreach (IParameterSymbol param in methodSymbol.Parameters)
             {
-                ParameterSyntax paramSyntax = SF.Parameter(SF.Identifier(param.Name)).WithType(SF.ParseTypeName(param.Type.GetFullyQualifiedName()));
+                ParameterSyntax paramSyntax = SF.Parameter(SF.Identifier(param.Name))
+                    .WithType(SF.ParseTypeName(param.Type.GetFullyQualifiedName()));
+
+                if (param.RefKind == RefKind.Out)
+                {
+                    paramSyntax = paramSyntax.WithModifiers(SyntaxTokenList.Create(SF.Token(SyntaxKind.OutKeyword)));
+                }
+                else if (param.RefKind == RefKind.Ref)
+                {
+                    paramSyntax = paramSyntax.WithModifiers(SyntaxTokenList.Create(SF.Token(SyntaxKind.RefKeyword)));
+                }
+
                 paramsSyntaxList.Add(paramSyntax);
             }
 
@@ -65,7 +79,9 @@ namespace Etg.SimpleStubs.CodeGen.Utils
         public static SyntaxKind GetVisibilityKeyword(ISymbol stubbedInterface)
         {
             return stubbedInterface.DeclaredAccessibility ==
-                Accessibility.Internal ? SyntaxKind.InternalKeyword : SyntaxKind.PublicKeyword;
+                   Accessibility.Internal
+                ? SyntaxKind.InternalKeyword
+                : SyntaxKind.PublicKeyword;
         }
     }
 }

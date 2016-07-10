@@ -4,45 +4,62 @@ using System.Text;
 
 namespace Etg.SimpleStubs.CodeGen.Utils
 {
-    class NamingUtils
+    internal class NamingUtils
     {
         public string GetInterfaceStubName(string interfaceName)
         {
             return "Stub" + interfaceName;
         }
 
-        public static string GetDelegatePropertyName(IMethodSymbol methodSymbol, INamedTypeSymbol targetInterface)
+	    public static string GetSetupMethodName(IMethodSymbol methodSymbol)
+	    {
+		    if (methodSymbol.IsPropertyGetter())
+		    {
+			    return methodSymbol.Name.Substring(4) + "_Get";
+		    }
+		    if (methodSymbol.IsPropertySetter())
+		    {
+			    return methodSymbol.Name.Substring(4) + "_Set";
+		    }
+			return methodSymbol.GetGenericName();
+	    }
+
+	    public static string GetDelegateTypeName(IMethodSymbol methodSymbol, INamedTypeSymbol targetInterface)
         {
-            string methodName = methodSymbol.Name;
-            if (methodSymbol.IsPropertyGetter())
-            {
-                methodName = methodName.Substring(4) + "_Get";
-            }
-            else if (methodSymbol.IsPropertySetter())
-            {
-                methodName = methodName.Substring(4) + "_Set";
-            }
+			string methodName = methodSymbol.Name;
+			if (methodSymbol.IsPropertyGetter())
+			{
+				methodName = methodName.Substring(4) + "_Get";
+			}
+			else if (methodSymbol.IsPropertySetter())
+			{
+				methodName = methodName.Substring(4) + "_Set";
+			}
 
-            // only prefix inherited members
-            if (targetInterface.GetGenericName() != methodSymbol.ContainingSymbol.GetGenericName())
-            {
-                methodName = SerializeName(methodSymbol.ContainingSymbol) + "_" + methodName;
-            }
+			// only prefix inherited members
+			if (targetInterface.GetGenericName() != methodSymbol.ContainingSymbol.GetGenericName())
+			{
+				methodName = SerializeName(methodSymbol.ContainingSymbol) + "_" + methodName;
+			}
 
-            if(methodSymbol.IsOrdinaryMethod())
-            {
-                if (methodSymbol.Parameters.Any())
-                {
-                    methodName = methodName + "_" + string.Join("_", methodSymbol.Parameters.Select(SerializeName));
-                }
-            }
-            return methodName;
+			if (methodSymbol.IsOrdinaryMethod())
+			{
+				if (methodSymbol.Parameters.Any())
+				{
+					methodName = methodName + "_" + string.Join("_", methodSymbol.Parameters.Select(SerializeName));
+				}
+			}
+
+			methodName += "_Delegate";
+
+			if (methodSymbol.IsGenericMethod)
+			{
+				methodName =
+					$"{methodName}<{string.Join(",", methodSymbol.TypeParameters.Select(symbol => symbol.Name))}>";
+			}
+			return methodName;
         }
 
-        public static string GetDelegateTypeName(string delegatePropertyName)
-        {
-            return delegatePropertyName + "_Delegate";
-        }
 
         public static string SerializeName(ISymbol param)
         {
@@ -66,7 +83,6 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                         {
                             sb.Append(part.Symbol.Name);
                         }
-
                         break;
                 }
             }

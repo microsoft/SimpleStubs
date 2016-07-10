@@ -9,15 +9,16 @@ using Etg.SimpleStubs.CodeGen.Utils;
 
 namespace Etg.SimpleStubs.CodeGen
 {
-    class InterfaceStubber : IInterfaceStubber
+    internal class InterfaceStubber : IInterfaceStubber
     {
         private readonly IEnumerable<IMethodStubber> _methodStubbers;
+
         public InterfaceStubber(IEnumerable<IMethodStubber> methodStubbers)
         {
             _methodStubbers = new List<IMethodStubber>(methodStubbers);
         }
 
-        public CompilationUnitSyntax StubInterface(CompilationUnitSyntax cu, InterfaceDeclarationSyntax interfaceDclr, 
+        public CompilationUnitSyntax StubInterface(CompilationUnitSyntax cu, InterfaceDeclarationSyntax interfaceDclr,
             SemanticModel semanticModel)
         {
             INamedTypeSymbol interfaceType = semanticModel.GetDeclaredSymbol(interfaceDclr);
@@ -28,12 +29,24 @@ namespace Etg.SimpleStubs.CodeGen
                 .AddModifiers(SF.Token(RoslynUtils.GetVisibilityKeyword(interfaceType))
                 //,SF.Token(SyntaxKind.PartialKeyword)
                 )
-				.WithBaseList(RoslynUtils.BaseList(interfaceName))
-				.AddAttributeLists(AttributeListList(Attribute("CompilerGenerated")).ToArray());
+                .WithBaseList(RoslynUtils.BaseList(interfaceName))
+                .AddAttributeLists(AttributeListList(Attribute("CompilerGenerated")).ToArray());
+
+            classDclr = classDclr.AddMembers(
+                SF.FieldDeclaration(
+                    SF.VariableDeclaration(SF.ParseTypeName("Dictionary<string, object>"),
+                        SF.SeparatedList(new[]
+                        {
+                            SF.VariableDeclarator(SF.Identifier("_stubs"), null,
+                                SF.EqualsValueClause(SF.ParseExpression("new Dictionary<string, object>()")))
+                        })))
+                    .AddModifiers(SF.Token(SyntaxKind.PrivateKeyword), SF.Token(SyntaxKind.ReadOnlyKeyword)));
+
+
             List<IMethodSymbol> methodsToStub = RoslynUtils.GetAllMethods(interfaceType);
             foreach (IMethodSymbol methodSymbol in methodsToStub)
             {
-                foreach(IMethodStubber methodStubber in _methodStubbers)
+                foreach (IMethodStubber methodStubber in _methodStubbers)
                 {
                     classDclr = methodStubber.StubMethod(classDclr, methodSymbol, interfaceType);
                 }
@@ -58,29 +71,29 @@ namespace Etg.SimpleStubs.CodeGen
             return namespaceNode;
         }
 
-		private static SyntaxList<AttributeListSyntax> AttributeListList(params AttributeSyntax[] attributes)
-		{
-			var list = new SyntaxList<AttributeListSyntax>();
-			foreach (AttributeSyntax attributeSyntax in attributes)
-			{
-				list = list.Add(AttributeList(attributeSyntax));
-			}
-			return list;
-		}
+        private static SyntaxList<AttributeListSyntax> AttributeListList(params AttributeSyntax[] attributes)
+        {
+            var list = new SyntaxList<AttributeListSyntax>();
+            foreach (AttributeSyntax attributeSyntax in attributes)
+            {
+                list = list.Add(AttributeList(attributeSyntax));
+            }
+            return list;
+        }
 
-		private static AttributeListSyntax AttributeList(params AttributeSyntax[] attributes)
-		{
-			SeparatedSyntaxList<AttributeSyntax> separatedList = SF.SeparatedList<AttributeSyntax>();
-			foreach (var attributeSyntax in attributes)
-			{
-				separatedList = separatedList.Add(attributeSyntax);
-			}
-			return SF.AttributeList(separatedList);
-		}
+        private static AttributeListSyntax AttributeList(params AttributeSyntax[] attributes)
+        {
+            SeparatedSyntaxList<AttributeSyntax> separatedList = SF.SeparatedList<AttributeSyntax>();
+            foreach (var attributeSyntax in attributes)
+            {
+                separatedList = separatedList.Add(attributeSyntax);
+            }
+            return SF.AttributeList(separatedList);
+        }
 
-		private static AttributeSyntax Attribute(string attributeName)
-		{
-			return SF.Attribute(SF.IdentifierName(attributeName));
-		}
-	}
+        private static AttributeSyntax Attribute(string attributeName)
+        {
+            return SF.Attribute(SF.IdentifierName(attributeName));
+        }
+    }
 }

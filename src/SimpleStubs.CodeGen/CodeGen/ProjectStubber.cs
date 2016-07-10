@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 
 namespace Etg.SimpleStubs.CodeGen.CodeGen
 {
-    class ProjectStubber : IProjectStubber
+    internal class ProjectStubber : IProjectStubber
     {
         private readonly IInterfaceStubber _interfaceStubber;
         private readonly SimpleStubsConfig _config;
+
         public ProjectStubber(IInterfaceStubber interfaceStubber, SimpleStubsConfig config)
         {
             _interfaceStubber = interfaceStubber;
@@ -28,7 +29,11 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
             {
                 SyntaxTree syntaxTree = await document.GetSyntaxTreeAsync();
                 SemanticModel semanticModel = await document.GetSemanticModelAsync();
-                IEnumerable<InterfaceDeclarationSyntax> interfaces = syntaxTree.GetRoot().DescendantNodes().OfType<InterfaceDeclarationSyntax>().Where(i => SatisfiesVisibilityConstraints(i));
+                IEnumerable<InterfaceDeclarationSyntax> interfaces =
+                    syntaxTree.GetRoot()
+                        .DescendantNodes()
+                        .OfType<InterfaceDeclarationSyntax>()
+                        .Where(i => SatisfiesVisibilityConstraints(i));
                 if (!interfaces.Any())
                 {
                     continue;

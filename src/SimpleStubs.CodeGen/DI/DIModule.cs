@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Etg.SimpleStubs.CodeGen.DI
 {
-    class DiModule
+    internal class DiModule
     {
         private readonly IContainer _container;
 
@@ -26,11 +26,13 @@ namespace Etg.SimpleStubs.CodeGen.DI
             cb.Register((c) =>
             {
                 IInterfaceStubber interfaceStubber = new InterfaceStubber(
-                    new IMethodStubber[] {
-                    new OrdinaryMethodStubber(),
-                    new EventStubber(),
-                    new PropertyStubber(),
-                    new StubbingPropertiesGenerator() });
+                    new IMethodStubber[]
+                    {
+                        new OrdinaryMethodStubber(),
+                        new EventStubber(),
+                        new PropertyStubber(),
+                        new StubbingDelegateGenerator()
+                    });
                 return interfaceStubber;
             }).As<IInterfaceStubber>().SingleInstance();
 

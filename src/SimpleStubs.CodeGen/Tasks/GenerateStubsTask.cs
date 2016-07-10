@@ -10,24 +10,16 @@ namespace Etg.SimpleStubs.CodeGen.Tasks
     public class GenerateStubsTask : Microsoft.Build.Utilities.AppDomainIsolatedTask
     {
         [Required]
-        public string OutputPath
-        {
-            get;
-            set;
-        }
+        public string OutputPath { get; set; }
 
         [Required]
-        public string ProjectPath 
-        {
-            get;
-            set;
-        }
+        public string ProjectPath { get; set; }
 
         public override bool Execute()
         {
             try
             {
-                LogMessage("Generating stubs"); 
+                LogMessage("Generating stubs");
                 DiModule diModule = new DiModule(ProjectPath, OutputPath);
                 File.WriteAllText(OutputPath, diModule.StubsGenerator.GenerateStubs(ProjectPath).Result);
                 return true;
