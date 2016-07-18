@@ -32,6 +32,8 @@ namespace Etg.SimpleStubs.CodeGen
                 .WithBaseList(RoslynUtils.BaseList(interfaceName))
                 .AddAttributeLists(AttributeListList(Attribute("CompilerGenerated")).ToArray());
 
+            classDclr = RoslynUtils.CopyGenericConstraints(interfaceType, classDclr);
+
             classDclr = classDclr.AddMembers(
                 SF.FieldDeclaration(
                     SF.VariableDeclaration(SF.ParseTypeName("Dictionary<string, object>"),

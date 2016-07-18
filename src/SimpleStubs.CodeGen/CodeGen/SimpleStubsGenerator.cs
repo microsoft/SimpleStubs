@@ -36,6 +36,7 @@ namespace Etg.SimpleStubs.CodeGen
             var usings = new HashSet<string>();
             usings.Add("System");
             usings.Add("System.Runtime.CompilerServices");
+            usings.Add("System.Collections.Generic");
             foreach (ProjectReference projectRef in currentProject.ProjectReferences)
             {
                 Project project = workspace.CurrentSolution.GetProject(projectRef.ProjectId);

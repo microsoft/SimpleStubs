@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestClassLibrary
@@ -71,31 +69,17 @@ namespace TestClassLibrary
         void DoSomethingInternal();
     }
 
-    public interface IGenericInterface<T>
+    public interface IGenericInterface<T, A> where T : class, IDisposable, new() where A : struct
     {
         T GetX();
     }
 
     public interface IInterfaceWithGenericMethod
     {
-        T GetFoo<T>();
-    }
+        T GetFoo<T>() where T : class;
 
-    public class Stub : IInterfaceWithGenericMethod
-    {
-        private readonly Dictionary<string, object> _stubs = new Dictionary<string, object>();
+        T GetBar<T>() where T : struct;
 
-        public delegate T GetFooOfT_Delegate<T>();
-
-        public T GetFoo<T>()
-        {
-            return ((GetFooOfT_Delegate<T>) _stubs[nameof(GetFooOfT_Delegate<T>)]).Invoke();
-        }
-
-        public Stub SetupGetFooOfT<T>(GetFooOfT_Delegate<T> del)
-        {
-            _stubs[nameof(GetFooOfT_Delegate<T>)] = del;
-            return this;
-        }
+        void SetBoo<T, A>(T t, A a) where T : class, IDisposable, new() where A : new();
     }
 }

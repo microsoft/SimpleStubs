@@ -20,7 +20,7 @@ namespace Etg.SimpleStubs.CodeGen
 
                 DelegateDeclarationSyntax delegateDclr = GenerateDelegateDclr(methodSymbol, delegateTypeName,
                     stubbedInterface);
-                MethodDeclarationSyntax propDclr = GenerateSetupMethod(setupMethodName, delegateTypeName,
+                MethodDeclarationSyntax propDclr = GenerateSetupMethod(methodSymbol, setupMethodName, delegateTypeName,
                     stubbedInterface, classDclr);
                 classDclr = classDclr.AddMembers(delegateDclr, propDclr);
             }
@@ -28,12 +28,12 @@ namespace Etg.SimpleStubs.CodeGen
             return classDclr;
         }
 
-        private static MethodDeclarationSyntax GenerateSetupMethod(string setupMethodName, string delegateTypeName,
+        private static MethodDeclarationSyntax GenerateSetupMethod(IMethodSymbol methodSymbol, string setupMethodName, string delegateTypeName,
             INamedTypeSymbol stubbedInterface,
             ClassDeclarationSyntax stub)
         {
             SyntaxKind visibility = RoslynUtils.GetVisibilityKeyword(stubbedInterface);
-            return SF.MethodDeclaration(SF.ParseTypeName(stub.Identifier.Text), setupMethodName)
+            MethodDeclarationSyntax methodDclr = SF.MethodDeclaration(SF.ParseTypeName(stub.Identifier.Text), setupMethodName)
                 .AddModifiers(SF.Token(visibility)).WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken))
                 .AddParameterListParameters(
                     SF.Parameter(SF.Identifier("del")).WithType(SF.ParseTypeName(delegateTypeName)))
@@ -42,6 +42,8 @@ namespace Etg.SimpleStubs.CodeGen
                     SF.ParseStatement("return this;\n")
                     ))
                 .WithSemicolonToken(SF.Token(SyntaxKind.None));
+
+            return RoslynUtils.CopyGenericConstraints(methodSymbol, methodDclr);
         }
 
         private static DelegateDeclarationSyntax GenerateDelegateDclr(IMethodSymbol methodSymbol, string delegateName,
@@ -49,9 +51,12 @@ namespace Etg.SimpleStubs.CodeGen
         {
             SyntaxKind visibility = RoslynUtils.GetVisibilityKeyword(stubbedInterface);
             List<ParameterSyntax> paramsSyntaxList = RoslynUtils.GetMethodParameterSyntaxList(methodSymbol);
-            return SF.DelegateDeclaration(SF.ParseTypeName(methodSymbol.ReturnType.GetFullyQualifiedName()),
+            DelegateDeclarationSyntax delegateDeclaration = SF.DelegateDeclaration(SF.ParseTypeName(methodSymbol.ReturnType.GetFullyQualifiedName()),
                 delegateName)
                 .AddModifiers(SF.Token(visibility)).AddParameterListParameters(paramsSyntaxList.ToArray());
+
+            delegateDeclaration = RoslynUtils.CopyGenericConstraints(methodSymbol, delegateDeclaration);
+            return delegateDeclaration;
         }
     }
 }

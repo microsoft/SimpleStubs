@@ -83,5 +83,74 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                 ? SyntaxKind.InternalKeyword
                 : SyntaxKind.PublicKeyword;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="symbolType">Can be a <see cref="INamedTypeSymbol"></see> or <see cref="IMethodSymbol"/>/></param>
+        /// <param name="declarationSyntax">Can be a <see cref="ClassDeclarationSyntax"/> 
+        /// or <see cref="MethodDeclarationSyntax"/> or <see cref="DelegateDeclarationSyntax"/></param>
+        public static dynamic CopyGenericConstraints(dynamic symbolType, dynamic declarationSyntax)
+        {
+            if (!IsGenericType(symbolType))
+            {
+                return declarationSyntax;
+            }
+            foreach (ITypeParameterSymbol typeParameter in GetTypeParameters(symbolType))
+            {
+                if (!HasConstraints(typeParameter))
+                {
+                    continue;
+                }
+
+                TypeParameterConstraintClauseSyntax constraintSyntax = SF.TypeParameterConstraintClause(typeParameter.Name);
+                if (typeParameter.HasReferenceTypeConstraint)
+                {
+                    constraintSyntax = constraintSyntax.AddConstraints(SF.ClassOrStructConstraint(SyntaxKind.ClassConstraint));
+                }
+                if (typeParameter.HasValueTypeConstraint)
+                {
+                    constraintSyntax = constraintSyntax.AddConstraints(SF.ClassOrStructConstraint(SyntaxKind.StructConstraint));
+                }
+                IEnumerable<TypeParameterConstraintSyntax> typeConstraints =
+                    typeParameter.ConstraintTypes.Select(symbol => SF.TypeConstraint(SF.IdentifierName(symbol.Name)));
+                constraintSyntax = constraintSyntax.AddConstraints(typeConstraints.ToArray());
+
+                if (typeParameter.HasConstructorConstraint)
+                {
+                    constraintSyntax = constraintSyntax.AddConstraints(SF.ConstructorConstraint());
+                }
+
+                declarationSyntax =
+                    declarationSyntax.AddConstraintClauses(constraintSyntax);
+            }
+            return declarationSyntax;
+        }
+
+        private static bool HasConstraints(ITypeParameterSymbol typeParameter)
+        {
+            return typeParameter.HasConstructorConstraint || typeParameter.HasReferenceTypeConstraint ||
+                   typeParameter.HasValueTypeConstraint || typeParameter.ConstraintTypes.Any();
+        }
+
+        private static bool IsGenericType(INamedTypeSymbol symbol)
+        {
+            return symbol.IsGenericType;
+        }
+
+        private static bool IsGenericType(IMethodSymbol symbol)
+        {
+            return symbol.IsGenericMethod;
+        }
+
+        private static IEnumerable<ITypeParameterSymbol> GetTypeParameters(INamedTypeSymbol symbol)
+        {
+            return symbol.TypeParameters;
+        }
+
+        private static IEnumerable<ITypeParameterSymbol> GetTypeParameters(IMethodSymbol symbol)
+        {
+            return symbol.TypeParameters;
+        }
     }
 }

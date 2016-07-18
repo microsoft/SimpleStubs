@@ -21,6 +21,7 @@ namespace Etg.SimpleStubs.CodeGen.Tasks
             {
                 LogMessage("Generating stubs");
                 DiModule diModule = new DiModule(ProjectPath, OutputPath);
+                Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
                 File.WriteAllText(OutputPath, diModule.StubsGenerator.GenerateStubs(ProjectPath).Result);
                 return true;
             }
