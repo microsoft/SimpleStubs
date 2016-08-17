@@ -146,7 +146,6 @@ It's also possible to instruct SimpleStubs to create stubs for internal interfac
 
 ## Current limitations
 * Only interfaces are stubbed.
-* Generic constrains are not supported.
 
 ## What if some stubs don't compile?
 
