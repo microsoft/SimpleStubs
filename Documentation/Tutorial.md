@@ -4,7 +4,7 @@ In this tutorial we will show how to install and use SimpleStubs.
 
 ## Installation
 
-To install SimpleStubs, simply install the `Etg.SimpleStubs` NuGet package to your unit test project.
+To install SimpleStubs, simply install the `Etg.SimpleStubs` NuGet package to your unit test project (also see Tips and Tricks section).
 
 Once installed, SimpleStubs will create stubs for all interfaces (`public` interfaces and optionally `internal` interfaces) in all referenced projects. No stubs will be generated for external libraries (dlls) but that's a feature we're considering. 
 
@@ -143,6 +143,18 @@ The configuration file allows you to instruct SimpleStubs to omit creating stubs
 **Note** that this very useful to exclude interfaces that are causing SimpleStubs to generate stubs that don't compile (this can happen in some edge cases). If you encounter such a case, exclude the interface in question and report the problem so we can fix it.
 
 It's also possible to instruct SimpleStubs to create stubs for internal interfaces (by default only public interfaces are stubbed) as shown in the configuration sample above.
+
+## Tips and Tricks
+
+### Reduce compile time by adding SimpleStubs to only one project in your solution
+
+If you have a solution composed of multiple projects, instead of installing SimpleStubs to each of your test projects,
+* Create a new project that will contain the stubs, call it something like *GeneratedStubs*
+* Install SimpleStubs to the *GeneratedStubs* project.
+* Reference all the projects in the solution from the *GeneratedStubs* project (or at least the projects that contain interfaces to be stubbed).
+* Reference the *GeneratedStubs* project in your test projects to access the stubs.
+
+As a result of this tip, the stubs will be generated only once.
 
 ## Current limitations
 * Only interfaces are stubbed.
