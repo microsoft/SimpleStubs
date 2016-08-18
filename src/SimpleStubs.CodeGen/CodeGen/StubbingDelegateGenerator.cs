@@ -36,9 +36,12 @@ namespace Etg.SimpleStubs.CodeGen
             MethodDeclarationSyntax methodDclr = SF.MethodDeclaration(SF.ParseTypeName(stub.Identifier.Text), setupMethodName)
                 .AddModifiers(SF.Token(visibility)).WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken))
                 .AddParameterListParameters(
-                    SF.Parameter(SF.Identifier("del")).WithType(SF.ParseTypeName(delegateTypeName)))
+                    SF.Parameter(SF.Identifier("del")).WithType(SF.ParseTypeName(delegateTypeName)),
+                    SF.Parameter(SF.Identifier("count")).WithType(SF.ParseTypeName("int")).WithDefault(SF.EqualsValueClause(SF.ParseExpression("Times.Forever"))),
+                    SF.Parameter(SF.Identifier("overwrite")).WithType(SF.ParseTypeName("bool")).WithDefault(SF.EqualsValueClause(SF.ParseExpression("false")))
+                    )
                 .WithBody(SF.Block(
-                    SF.ParseStatement($"_stubs[nameof({delegateTypeName})] = del;\n"),
+                    SF.ParseStatement("_stubs.SetMethodStub(del, count, overwrite);\n"),
                     SF.ParseStatement("return this;\n")
                     ))
                 .WithSemicolonToken(SF.Token(SyntaxKind.None));

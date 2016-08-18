@@ -33,7 +33,7 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                     syntaxTree.GetRoot()
                         .DescendantNodes()
                         .OfType<InterfaceDeclarationSyntax>()
-                        .Where(i => SatisfiesVisibilityConstraints(i));
+                        .Where(SatisfiesVisibilityConstraints);
                 if (!interfaces.Any())
                 {
                     continue;
@@ -55,7 +55,6 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                         Trace.TraceError($"Could not generate stubs for interface {interfaceDclr}, Exception: {e}");
                     }
                 }
-
                 usings.AddRange(syntaxTree.GetCompilationUnitRoot().Usings.Select(@using => @using.Name.ToString()));
             }
 

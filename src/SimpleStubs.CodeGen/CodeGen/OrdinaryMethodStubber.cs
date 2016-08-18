@@ -27,20 +27,9 @@ namespace Etg.SimpleStubs.CodeGen
                         SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
 
             string delegateTypeName = NamingUtils.GetDelegateTypeName(methodSymbol, stubbedInterface);
-            string parameters = string.Join(", ", methodSymbol.Parameters.Select(p =>
-            {
-                if (p.RefKind == RefKind.Out)
-                {
-                    return $"out {p.Name}";
-                }
-                if (p.RefKind == RefKind.Ref)
-                {
-                    return $"ref {p.Name}";
-                }
-                return p.Name;
-            }));
+            string parameters = FormatParameters(methodSymbol);
 
-            string callDelegateStmt = StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, parameters);
+            string callDelegateStmt = StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.GetGenericName(), parameters);
             if (!methodSymbol.ReturnsVoid)
             {
                 callDelegateStmt = callDelegateStmt.Insert(0, "return ");
@@ -51,5 +40,21 @@ namespace Etg.SimpleStubs.CodeGen
 
             return classDclr;
         }
+
+	    private static string FormatParameters(IMethodSymbol methodSymbol)
+	    {
+		    return string.Join(", ", methodSymbol.Parameters.Select(p =>
+		    {
+			    if (p.RefKind == RefKind.Out)
+			    {
+				    return $"out {p.Name}";
+			    }
+			    if (p.RefKind == RefKind.Ref)
+			    {
+				    return $"ref {p.Name}";
+			    }
+			    return p.Name;
+		    }));
+	    }
     }
 }

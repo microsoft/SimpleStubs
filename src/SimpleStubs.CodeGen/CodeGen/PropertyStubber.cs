@@ -38,7 +38,7 @@ namespace Etg.SimpleStubs.CodeGen
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, ""))
+                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.Name, ""))
                     })));
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
             }
@@ -47,7 +47,7 @@ namespace Etg.SimpleStubs.CodeGen
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, "value"))
+                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.Name, "value"))
                     })));
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
             }

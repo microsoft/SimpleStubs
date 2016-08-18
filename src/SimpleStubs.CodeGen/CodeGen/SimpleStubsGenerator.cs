@@ -14,8 +14,8 @@ namespace Etg.SimpleStubs.CodeGen
 {
     internal class SimpleStubsGenerator
     {
-        private IProjectStubber _projectStubber;
-        private SimpleStubsConfig _config;
+        private readonly IProjectStubber _projectStubber;
+        private readonly SimpleStubsConfig _config;
 
         public SimpleStubsGenerator(IProjectStubber projectStubber, SimpleStubsConfig config)
         {
@@ -36,7 +36,7 @@ namespace Etg.SimpleStubs.CodeGen
             var usings = new HashSet<string>();
             usings.Add("System");
             usings.Add("System.Runtime.CompilerServices");
-            usings.Add("System.Collections.Generic");
+            usings.Add("Etg.SimpleStubs");
             foreach (ProjectReference projectRef in currentProject.ProjectReferences)
             {
                 Project project = workspace.CurrentSolution.GetProject(projectRef.ProjectId);
