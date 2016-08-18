@@ -61,7 +61,7 @@ namespace SimpleStubs.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(SimpleStubsException))]
         public void TestGetMethodStubWhenNotSetup()
         {
             StubContainer<IFoo> container = new StubContainer<IFoo>();

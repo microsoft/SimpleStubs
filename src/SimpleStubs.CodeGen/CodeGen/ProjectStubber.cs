@@ -25,7 +25,6 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
         public async Task<StubProjectResult> StubProject(Project project, CompilationUnitSyntax cu)
         {
             var usings = new List<string>();
-            usings.Add("Etg.SimpleStubs");
             foreach (Document document in project.Documents)
             {
                 SyntaxTree syntaxTree = await document.GetSyntaxTreeAsync();
