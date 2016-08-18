@@ -29,7 +29,22 @@ public interface IPhoneBook
 
 ### Stubbing methods
 ```csharp
+// for any number of calls
 var stub = new StubIPhoneBook().GetContactPhoneNumber((firstName, lastName) => 6041234567);
+```
+
+or
+
+```csharp
+// For one call; an exception will be thrown if more calls occur
+var stub = new StubIPhoneBook().GetContactPhoneNumber((firstName, lastName) => 6041234567, Times.Once);
+```
+
+or 
+
+```csharp
+// For a specific number of calls
+var stub = new StubIPhoneBook().GetContactPhoneNumber((firstName, lastName) => 6041234567, count:5);
 ```
 
 You can also copy and verify the parameters values:
@@ -109,16 +124,24 @@ stub.PhoneNumberChanged_Raise(stub, 55);
 In some cases, it might be useful to have a stub behave differently when it's called several times. SimpleStubs offers supports for stubbing a sequence of calls.
 
 ```csharp
-// Define the sequence first
-var sequence = StubsUtils.Sequence<Func<string, string, int>>()
-    .Once((p1, p2) => { throw new Exception(); }) // first call will throw an exception
-    .Repeat((p1, p2) => 11122233, 3) // next three calls will return 11122233
-    .Forever((p1, p2) => 22233556); // any subsequent call will return 22233556
-    
-var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => sequence.Next(p1, p2));
+var stub = new StubIPhoneBook()
+    .GetContactPhoneNumber((p1, p2) => 12345678, Times.Once) // first call
+    .GetContactPhoneNumber((p1, p2) => 11122233, Times.Twice) // next two calls
+    .GetContactPhoneNumber((p1, p2) => 22233556, Times.Forever); // rest of the calls
+```
 
-// you can also verify how many times the sequence was called
-Assert.AreEqual(5, sequence.CallCount);
+## Overwriting stubs
+
+It's possible to overwrite a stubbed method or property as follows:
+```csharp
+var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678);
+
+// test code
+
+// overwrite the stub
+stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite:true);
+
+// other test code
 ```
 
 ## Configuration
