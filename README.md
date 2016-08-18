@@ -1,6 +1,8 @@
 SimpleStubs
 =======
 
+[![Join the chat at https://gitter.im/Microsoft/SimpleStubs](https://badges.gitter.im/Microsoft/SimpleStubs.svg)](https://gitter.im/Microsoft/SimpleStubs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 *SimpleStubs* is a simple mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework. SimpleStubs is currently developed and maintained by Microsoft BigPark Studios in Vancouver.
 
 The framework can be installed to your test project using `Etg.SimpleStubs` NuGet package.
