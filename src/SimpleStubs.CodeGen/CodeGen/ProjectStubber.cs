@@ -33,11 +33,13 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                     syntaxTree.GetRoot()
                         .DescendantNodes()
                         .OfType<InterfaceDeclarationSyntax>()
-                        .Where(i => SatisfiesVisibilityConstraints(i));
+                        .Where(SatisfiesVisibilityConstraints);
                 if (!interfaces.Any())
                 {
                     continue;
                 }
+
+                cu = AddStubContainerDefinition(cu);
 
                 foreach (var interfaceDclr in interfaces)
                 {
@@ -55,11 +57,56 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                         Trace.TraceError($"Could not generate stubs for interface {interfaceDclr}, Exception: {e}");
                     }
                 }
-
                 usings.AddRange(syntaxTree.GetCompilationUnitRoot().Usings.Select(@using => @using.Name.ToString()));
             }
 
             return new StubProjectResult(cu, usings);
+        }
+
+        private CompilationUnitSyntax AddStubContainerDefinition(CompilationUnitSyntax cu)
+        {
+            string text = @"
+    /// <summary>
+    /// Holds the stubs for a given interface
+    /// </summary>
+    public class StubContainer<TStub>
+    {
+        private readonly Dictionary<string, object> _stubs = new Dictionary<string, object>();
+        private readonly string _stubTypeName;
+
+        public StubContainer()
+        {
+            _stubTypeName = typeof(TStub).ToString();
+        }
+
+        public TDelegate GetMethodStub<TDelegate>(string methodName)
+        {
+            string key = ToUniqueId<TDelegate>();
+            object value;
+            _stubs.TryGetValue(key, out value);
+            if (value == null)
+            {
+                throw new InvalidOperationException(
+                    $""The stub { _stubTypeName} does not contain a stub for the method { methodName}"");
+            }
+            return (TDelegate) value;
+        }
+
+    public void SetMethodStub<TDelegate>(TDelegate del)
+    {
+        string key = ToUniqueId<TDelegate>();
+        _stubs[key] = del;
+    }
+
+    private static string ToUniqueId<T>()
+    {
+        return typeof(T).ToString();
+    }
+}
+";
+            SyntaxTree syntaxTree = SyntaxFactory.ParseSyntaxTree(text);
+            ClassDeclarationSyntax classDeclaration = syntaxTree.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().First();
+            return cu.AddMembers(classDeclaration);
         }
 
         private bool SatisfiesVisibilityConstraints(InterfaceDeclarationSyntax i)

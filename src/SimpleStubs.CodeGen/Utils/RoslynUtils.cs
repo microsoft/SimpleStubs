@@ -127,6 +127,13 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             return declarationSyntax;
         }
 
+
+        public static MethodDeclarationSyntax ParseMethod(string text)
+        {
+            SyntaxTree syntaxTree = SF.ParseSyntaxTree(text);
+            return syntaxTree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+        }
+
         private static bool HasConstraints(ITypeParameterSymbol typeParameter)
         {
             return typeParameter.HasConstructorConstraint || typeParameter.HasReferenceTypeConstraint ||

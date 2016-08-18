@@ -103,6 +103,7 @@
     <Compile Include="CodeGen\InterfaceStubber.cs" />
     <Compile Include="CodeGen\IProjectStubber.cs" />
     <Compile Include="CodeGen\ProjectStubber.cs" />
+    <Compile Include="CodeGen\StubContainer.cs" />
     <Compile Include="Utils\StubbingUtils.cs" />
     <Compile Include="CodeGen\StubProjectResult.cs" />
     <Compile Include="Config\SimpleStubsConfig.cs" />

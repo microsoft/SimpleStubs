@@ -9,6 +9,9 @@ namespace Etg.SimpleStubs.CodeGen
 {
     using SF = SyntaxFactory;
 
+    /// <summary>
+    /// Generate the code needed to stub an event
+    /// </summary>
     internal class EventStubber : IMethodStubber
     {
         public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,

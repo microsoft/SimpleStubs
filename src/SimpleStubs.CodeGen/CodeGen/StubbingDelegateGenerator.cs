@@ -38,7 +38,7 @@ namespace Etg.SimpleStubs.CodeGen
                 .AddParameterListParameters(
                     SF.Parameter(SF.Identifier("del")).WithType(SF.ParseTypeName(delegateTypeName)))
                 .WithBody(SF.Block(
-                    SF.ParseStatement($"_stubs[nameof({delegateTypeName})] = del;\n"),
+                    SF.ParseStatement("_stubs.SetMethodStub(del);\n"),
                     SF.ParseStatement("return this;\n")
                     ))
                 .WithSemicolonToken(SF.Token(SyntaxKind.None));
