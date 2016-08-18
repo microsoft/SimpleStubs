@@ -40,7 +40,7 @@ namespace Etg.SimpleStubs
                     if (!_sequence.Any())
                     {
                         throw new SequenceContainerException(
-                            $"The stub sequence has been called more than expected; Make sure the {nameof(SequenceContainer<T>)} is setup correclty");
+                            "The stub sequence has been called more than expected");
                     }
 
                     var se = _sequence[0];

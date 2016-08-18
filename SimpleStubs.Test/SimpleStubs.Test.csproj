@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{62C97A39-3ED8-4D13-8A94-C41DB08C3457}</ProjectGuid>
+    <ProjectGuid>{42D8B4EF-C779-4966-AF96-46F51E15C88E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleStubs.CodeGen.Test</RootNamespace>
-    <AssemblyName>SimpleStubs.CodeGen.Test</AssemblyName>
+    <RootNamespace>SimpleStubs.Test</RootNamespace>
+    <AssemblyName>SimpleStubs.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,13 +51,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="StubContainerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StubContainerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\SimpleStubs.CodeGen\SimpleStubs.CodeGen.csproj">
-      <Project>{3e9c520a-94cf-46d0-864b-4293d439c92a}</Project>
-      <Name>SimpleStubs.CodeGen</Name>
+    <ProjectReference Include="..\src\SimpleStubs\SimpleStubs.csproj">
+      <Project>{c1aad08e-2a69-429c-8aff-142b468e0a8f}</Project>
+      <Name>SimpleStubs</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

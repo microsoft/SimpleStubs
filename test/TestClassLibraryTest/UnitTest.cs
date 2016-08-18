@@ -77,11 +77,11 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestCallSequence()
         {
-            var sequence = StubsUtils.Sequence<Func<string, string, int>>()
-                .Once((p1, p2) => 12345678) // first call
-                .Repeat((p1, p2) => 11122233, 2) // next two call
-                .Forever((p1, p2) => 22233556); // rest of the calls
-            var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => sequence.Next(p1, p2));
+            var stub = new StubIPhoneBook()
+                .GetContactPhoneNumber((p1, p2) => 12345678, Times.Once) // first call
+                .GetContactPhoneNumber((p1, p2) => 11122233, Times.Twice) // next two calls
+                .GetContactPhoneNumber((p1, p2) => 22233556, Times.Forever); // rest of the calls
+
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(12345678, phoneBook.GetContactPhoneNumber("John", "Smith"));
             Assert.AreEqual(11122233, phoneBook.GetContactPhoneNumber("John", "Smith"));
@@ -89,8 +89,36 @@ namespace TestClassLibraryTest
             Assert.AreEqual(22233556, phoneBook.GetContactPhoneNumber("John", "Smith"));
             Assert.AreEqual(22233556, phoneBook.GetContactPhoneNumber("John", "Smith"));
             Assert.AreEqual(22233556, phoneBook.GetContactPhoneNumber("John", "Smith"));
+        }
 
-            Assert.AreEqual(6, sequence.CallCount);
+        [TestMethod]
+        [ExpectedException(typeof(SimpleStubsException))]
+        public void TestThatExceptionIsThrownWhenStubIsNotSetup()
+        {
+            var stub = new StubIPhoneBook();
+            IPhoneBook phoneBook = stub;
+            phoneBook.GetContactPhoneNumber("John", "Smith");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SimpleStubsException))]
+        
+        public void TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected()
+        {
+            var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678, Times.Once);
+            IPhoneBook phoneBook = stub;
+            phoneBook.GetContactPhoneNumber("John", "Smith");
+            phoneBook.GetContactPhoneNumber("John", "Smith");
+        }
+
+        [TestMethod]
+        public void TestThatMethodStubCanBeOverwritten()
+        {
+            var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678);
+            stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite:true);
+
+            IPhoneBook phoneBook = stub;
+            Assert.AreEqual(11122233, phoneBook.GetContactPhoneNumber("John", "Smith"));
         }
 
         [TestMethod]
