@@ -4,11 +4,11 @@ In this tutorial we will show how to install and use SimpleStubs.
 
 ## Installation
 
-To install SimpleStubs, simply install the `Etg.SimpleStubs` NuGet package to your unit test project (also see Tips and Tricks section).
+To install SimpleStubs, simply install the `Etg.SimpleStubs` NuGet package to your unit test project (also see *Tips and Tricks* section for installation tips).
 
-Once installed, SimpleStubs will create stubs for all interfaces (`public` interfaces and optionally `internal` interfaces) in all referenced projects. No stubs will be generated for external libraries (dlls) but that's a feature we're considering. 
+Once installed, SimpleStubs will create stubs for all interfaces (`public` interfaces and optionally `internal` interfaces) in all referenced projects. 
 
-The generated stubs will be added to the `Properties\SimpleStubs.generated.cs` file which will be regenerated every time the project is built (the stubs will be generated before the build and will be compiled as part of the build, so you don't need to worry about any of that). Because the stubs are regenerated every time, modifying the stubs manually has no effect (if you really want to modify a stub, copy it to a different file).
+The generated stubs will be added to the `Properties\SimpleStubs.generated.cs` file and compiled as part of the build process. Because the stubs are generated, modifying the stubs manually has no effect (if you really want to modify a stub, copy it to a different file).
 
 **Important note for UWP**: Because of a limitation in NuGet support for UWP (see discussion [here](https://github.com/NuGet/Home/wiki/Bringing-back-content-support,-September-24th,-2015)), the `Properties\SimpleStubs.generated.cs` file will not be automatically added to UWP projects and must be manually added (simply add the file to the `Properties` folder of your test project).
 
@@ -177,10 +177,15 @@ If you have a solution composed of multiple projects, instead of installing Simp
 * Reference all the projects in the solution from the *GeneratedStubs* project (or at least the projects that contain interfaces to be stubbed).
 * Reference the *GeneratedStubs* project in your test projects to access the stubs.
 
-As a result of this tip, the stubs will be generated only once.
+With this approach, each stub is generated only once and only when there are code changes.
+
+### Generate stubs for external interfaces
+
+By default, SimpleStubs ignores external interfaces because there can be too many of them to generate stubs for. One simple way of generating a stub for an external interface is to create an internal interface that inherits from it (you don't need to use the internal fake interface anywhere in the code). Because SimpleStubs handles inheritance, the generated stub can be used as a stub of the original external interface.
 
 ## Current limitations
 * Only interfaces are stubbed.
+* No stubs will be generated for external libraries (dlls). See *Tips and Tricks* section for a workaround.
 
 ## What if some stubs don't compile?
 
