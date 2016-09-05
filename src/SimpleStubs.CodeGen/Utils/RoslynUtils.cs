@@ -55,21 +55,21 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             return paramsSyntaxList;
         }
 
-        public static List<IMethodSymbol> GetAllMethods(INamedTypeSymbol interfaceType)
+        public static List<T> GetAllMembers<T>(INamedTypeSymbol interfaceType)
         {
-            var methodsToStub = new List<IMethodSymbol>(interfaceType.GetMembers().OfType<IMethodSymbol>());
-            methodsToStub.AddRange(GetAllInheritedMethods(interfaceType));
+            var methodsToStub = new List<T>(interfaceType.GetMembers().OfType<T>());
+            methodsToStub.AddRange(GetAllInheritedMethods<T>(interfaceType));
             return methodsToStub;
         }
 
-        public static IEnumerable<IMethodSymbol> GetAllInheritedMethods(ITypeSymbol typeSymbol)
+        public static IEnumerable<T> GetAllInheritedMethods<T>(ITypeSymbol typeSymbol)
         {
-            var methods = new List<IMethodSymbol>();
+            var methods = new List<T>();
             if (typeSymbol.AllInterfaces.Any())
             {
                 foreach (var baseInterfaceType in typeSymbol.AllInterfaces)
                 {
-                    methods.AddRange(baseInterfaceType.GetMembers().OfType<IMethodSymbol>());
+                    methods.AddRange(baseInterfaceType.GetMembers().OfType<T>());
                 }
             }
 

@@ -102,7 +102,7 @@ namespace TestClassLibraryTest
 
         [TestMethod]
         [ExpectedException(typeof(SimpleStubsException))]
-        
+
         public void TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected()
         {
             var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678, Times.Once);
@@ -115,7 +115,7 @@ namespace TestClassLibraryTest
         public void TestThatMethodStubCanBeOverwritten()
         {
             var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678);
-            stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite:true);
+            stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite: true);
 
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(11122233, phoneBook.GetContactPhoneNumber("John", "Smith"));
@@ -165,12 +165,63 @@ namespace TestClassLibraryTest
             int i1 = 1;
             int i2 = 2;
 
-            ((IRefUtils) stub).Swap<int>(ref i1, ref i2);
+            ((IRefUtils)stub).Swap<int>(ref i1, ref i2);
             Assert.AreEqual(2, i1);
             Assert.AreEqual(1, i2);
         }
 
+        [TestMethod]
+        public void TestIndexerGet()
+        {
+            var stub = new StubIGenericContainer<int>();
+            stub.Item_Get(index =>
+            {
+                switch (index)
+                {
+                    case 0:
+                        return 13;
+                    case 1:
+                        return 5;
+                    default:
+                        throw new IndexOutOfRangeException();
+                }
+            });
+
+            IGenericContainer<int> container = stub;
+            Assert.AreEqual(13, container[0]);
+            Assert.AreEqual(5, container[1]);
+        }
+
+        [TestMethod]
+        public void TestIndexerSet()
+        {
+            var stub = new StubIGenericContainer<int>();
+            int res = -1;
+            stub.Item_Set((index, value) =>
+            {
+                if (index != 0) throw new IndexOutOfRangeException();
+                res = value;
+            });
+
+            IGenericContainer<int> container = stub;
+            container[0] = 13;
+
+            Assert.AreEqual(13, res);
+        }
+
+        [TestMethod]
+        public void TestThatMultipleIndexerDontConflict()
+        {
+            var stub = new StubIGenericContainer<int>();
+            stub.Item_Get(index => 12).Item_Get((key, i) => 3);
+
+            IGenericContainer<int> container = stub;
+            Assert.AreEqual(12, container[0]);
+            Assert.AreEqual(3, container["foo", 0]);
+        }
+
         // this test is only used for debugging
+        [Ignore]
         [TestMethod]
         public async Task TestGenerateStubs()
         {

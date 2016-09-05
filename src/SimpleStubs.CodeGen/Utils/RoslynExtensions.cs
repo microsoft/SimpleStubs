@@ -42,6 +42,22 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             return methodSymbol.MethodKind == MethodKind.PropertyGet;
         }
 
+        public static bool IsIndexerGetter(this IMethodSymbol methodSymbol)
+        {
+            return methodSymbol.Name == "get_Item";
+        }
+
+        public static bool IsIndexerSetter(this IMethodSymbol methodSymbol)
+        {
+            return methodSymbol.Name == "set_Item";
+        }
+
+        public static bool IsIndexerAccessor(this IMethodSymbol methodSymbol)
+        {
+            IPropertySymbol propertySymbol = methodSymbol.AssociatedSymbol as IPropertySymbol;
+            return propertySymbol != null && propertySymbol.IsIndexer;
+        }
+
         public static string GetGenericName(this IMethodSymbol methodSymbol)
         {
             string name = methodSymbol.Name;
@@ -52,7 +68,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             return name;
         }
 
-        public static string GetContainingInterfaceGenericQualifiedName(this IMethodSymbol methodSymbol)
+        public static string GetContainingInterfaceGenericQualifiedName(this ISymbol methodSymbol)
         {
             return methodSymbol.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         }
@@ -101,6 +117,22 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                 SyntaxFactory.Token(SyntaxKind.ProtectedKeyword).RawKind
             };
             return !typeDclr.Modifiers.Any(modifier => nonInternalModifiers.Contains(modifier.RawKind));
+        }
+
+        public static BasePropertyDeclarationSyntax AddAccessorListAccessors(this BasePropertyDeclarationSyntax baseDclr, params AccessorDeclarationSyntax[] accessors)
+        {
+            var propDclr = baseDclr as PropertyDeclarationSyntax;
+            if (propDclr != null)
+            {
+                return propDclr.AddAccessorListAccessors(accessors);
+            }
+
+            var indexerDclr = baseDclr as IndexerDeclarationSyntax;
+            if (indexerDclr != null)
+            {
+                return indexerDclr.AddAccessorListAccessors(accessors); 
+            }
+            throw new InvalidOperationException();
         }
     }
 }

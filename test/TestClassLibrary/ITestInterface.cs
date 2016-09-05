@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace TestClassLibrary
@@ -20,12 +21,18 @@ namespace TestClassLibrary
         event EventHandler<long> PhoneNumberChanged;
     }
 
+    // just to make sure all inherited members are stubbed
+    public interface IPhoneBookSpecial : IPhoneBook
+    {
+    }
+
     public interface IContainer
     {
         T GetElement<T>(int index);
         void SetElement<T>(int index, T value);
 
         bool GetElement(int index, out object value);
+
     }
 
     public interface IRefUtils
@@ -72,6 +79,18 @@ namespace TestClassLibrary
     public interface IGenericInterface<T, A> where T : class, IDisposable, new() where A : struct
     {
         T GetX();
+    }
+
+    public interface IGenericContainer<T>
+    {
+        T this[int index] { get; set; }
+
+        T this[string key, int n] { get; }
+    }
+
+    // just to make sure inherited indexers are stubbed
+    public interface IGenericContainerSubInterface : IGenericContainer<int>
+    {
     }
 
     public interface IInterfaceWithGenericMethod

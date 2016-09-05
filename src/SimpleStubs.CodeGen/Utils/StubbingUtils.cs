@@ -9,5 +9,21 @@ namespace Etg.SimpleStubs.CodeGen.Utils
         {
             return $"_stubs.GetMethodStub<{delegateTypeName}>(\"{methodName}\").Invoke({parameters});\n";
         }
-	}
+
+        public static string FormatParameters(IMethodSymbol methodSymbol)
+        {
+            return string.Join(", ", methodSymbol.Parameters.Select(p =>
+            {
+                if (p.RefKind == RefKind.Out)
+                {
+                    return $"out {p.Name}";
+                }
+                if (p.RefKind == RefKind.Ref)
+                {
+                    return $"ref {p.Name}";
+                }
+                return p.Name;
+            }));
+        }
+    }
 }

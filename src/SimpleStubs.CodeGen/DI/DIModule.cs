@@ -30,8 +30,11 @@ namespace Etg.SimpleStubs.CodeGen.DI
                     {
                         new OrdinaryMethodStubber(),
                         new EventStubber(),
-                        new PropertyStubber(),
                         new StubbingDelegateGenerator()
+                    },
+                    new IPropertyStubber[]
+                    {
+                        new PropertyStubber()
                     });
                 return interfaceStubber;
             }).As<IInterfaceStubber>().SingleInstance();

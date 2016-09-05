@@ -1,79 +1,75 @@
-﻿using System;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Etg.SimpleStubs.CodeGen.Utils;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Etg.SimpleStubs.CodeGen
 {
-    using Microsoft.CodeAnalysis.CSharp;
-    using System.Linq;
-    using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+    using SF = SyntaxFactory;
 
-    internal class PropertyStubber : IMethodStubber
+    internal class PropertyStubber : IPropertyStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
+        public ClassDeclarationSyntax StubProperty(ClassDeclarationSyntax classDclr, IPropertySymbol propertySymbol,
             INamedTypeSymbol stubbedInterface)
         {
-            if (!methodSymbol.IsPropertyAccessor())
-            {
-                return classDclr;
-            }
+            string indexerType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            BasePropertyDeclarationSyntax propDclr = null;
 
-            string delegateTypeName = NamingUtils.GetDelegateTypeName(methodSymbol, stubbedInterface);
-
-            string propName = methodSymbol.AssociatedSymbol.Name;
-            string propType =
-                ((IPropertySymbol) methodSymbol.AssociatedSymbol).Type.ToDisplayString(
-                    SymbolDisplayFormat.FullyQualifiedFormat);
-            var propDclr = GetPropDclr(classDclr, propName);
-            if (propDclr == null)
+            if (propertySymbol.GetMethod != null)
             {
-                propDclr = SF.PropertyDeclaration(SF.ParseTypeName(propType), SF.Identifier(propName))
-                    .WithExplicitInterfaceSpecifier(SF.ExplicitInterfaceSpecifier(
-                        SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
-            }
+                IMethodSymbol getMethodSymbol = propertySymbol.GetMethod;
+                string parameters = StubbingUtils.FormatParameters(getMethodSymbol);
 
-            if (methodSymbol.IsPropertyGetter())
-            {
+                string delegateTypeName = NamingUtils.GetDelegateTypeName(getMethodSymbol, stubbedInterface);
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.Name, ""))
+                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, getMethodSymbol.Name, parameters))
                     })));
+
+                propDclr = CreatePropertyDclr(getMethodSymbol, indexerType);
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
+                
             }
-            else if (methodSymbol.IsPropertySetter())
+            if (propertySymbol.SetMethod != null)
             {
+                IMethodSymbol setMethodSymbol = propertySymbol.SetMethod;
+                string parameters = $"{StubbingUtils.FormatParameters(setMethodSymbol)}";
+                string delegateTypeName = NamingUtils.GetDelegateTypeName(setMethodSymbol, stubbedInterface);
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.Name, "value"))
+                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, setMethodSymbol.Name, parameters))
                     })));
+                if (propDclr == null)
+                {
+                    propDclr = CreatePropertyDclr(setMethodSymbol, indexerType);
+                }
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
             }
 
-            if (propDclr != null)
-            {
-                PropertyDeclarationSyntax existingPropDclr = GetPropDclr(classDclr, propName);
-                if (existingPropDclr != null)
-                {
-                    classDclr = classDclr.ReplaceNode(existingPropDclr, propDclr);
-                }
-                else
-                {
-                    classDclr = classDclr.AddMembers(propDclr);
-                }
-            }
-
+            classDclr = classDclr.AddMembers(propDclr);
             return classDclr;
         }
 
-        private static PropertyDeclarationSyntax GetPropDclr(ClassDeclarationSyntax classDclr, string propName)
+        private BasePropertyDeclarationSyntax CreatePropertyDclr(IMethodSymbol methodSymbol, string propType)
         {
-            return
-                classDclr.DescendantNodes()
-                    .OfType<PropertyDeclarationSyntax>()
-                    .FirstOrDefault(p => p.Identifier.Text == propName);
+            if (methodSymbol.IsIndexerAccessor())
+            {
+                IndexerDeclarationSyntax indexerDclr = SF.IndexerDeclaration(
+                    SF.ParseTypeName(propType))
+                    .WithExplicitInterfaceSpecifier(SF.ExplicitInterfaceSpecifier(
+                        SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
+                indexerDclr = indexerDclr.AddParameterListParameters(
+                        RoslynUtils.GetMethodParameterSyntaxList(methodSymbol).ToArray());
+                return indexerDclr;
+            }
+
+            string propName = methodSymbol.AssociatedSymbol.Name;
+            PropertyDeclarationSyntax propDclr = SF.PropertyDeclaration(SF.ParseTypeName(propType), SF.Identifier(propName))
+            .WithExplicitInterfaceSpecifier(SF.ExplicitInterfaceSpecifier(
+                SF.IdentifierName(methodSymbol.GetContainingInterfaceGenericQualifiedName())));
+            return propDclr;
         }
     }
 }

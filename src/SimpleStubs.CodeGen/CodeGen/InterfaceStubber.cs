@@ -12,9 +12,11 @@ namespace Etg.SimpleStubs.CodeGen
     internal class InterfaceStubber : IInterfaceStubber
     {
         private readonly IEnumerable<IMethodStubber> _methodStubbers;
+        private readonly IEnumerable<IPropertyStubber> _propertyStubbers; 
 
-        public InterfaceStubber(IEnumerable<IMethodStubber> methodStubbers)
+        public InterfaceStubber(IEnumerable<IMethodStubber> methodStubbers, IEnumerable<IPropertyStubber> propertyStubbers)
         {
+            _propertyStubbers = propertyStubbers;
             _methodStubbers = new List<IMethodStubber>(methodStubbers);
         }
 
@@ -32,6 +34,7 @@ namespace Etg.SimpleStubs.CodeGen
 
             classDclr = RoslynUtils.CopyGenericConstraints(interfaceType, classDclr);
             classDclr = AddStubContainerField(classDclr, stubName);
+            classDclr = StubProperties(interfaceType, classDclr);
             classDclr = StubMethods(interfaceType, classDclr);
 
             string fullNameSpace = semanticModel.GetDeclaredSymbol(namespaceNode).ToString();
@@ -42,9 +45,22 @@ namespace Etg.SimpleStubs.CodeGen
             return cu;
         }
 
+        private ClassDeclarationSyntax StubProperties(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr)
+        {
+            IEnumerable<IPropertySymbol> propertiesToStub = RoslynUtils.GetAllMembers<IPropertySymbol>(interfaceType);
+            foreach (IPropertySymbol propertySymbol in propertiesToStub)
+            {
+                foreach (IPropertyStubber propertyStubber in _propertyStubbers)
+                {
+                    classDclr = propertyStubber.StubProperty(classDclr, propertySymbol, interfaceType);
+                }
+            }
+            return classDclr;
+        }
+
         private ClassDeclarationSyntax StubMethods(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr)
         {
-            List<IMethodSymbol> methodsToStub = RoslynUtils.GetAllMethods(interfaceType);
+            IEnumerable<IMethodSymbol> methodsToStub = RoslynUtils.GetAllMembers<IMethodSymbol>(interfaceType);
             foreach (IMethodSymbol methodSymbol in methodsToStub)
             {
                 foreach (IMethodStubber methodStubber in _methodStubbers)

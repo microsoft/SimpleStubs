@@ -42,7 +42,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 				methodName = SerializeName(methodSymbol.ContainingSymbol) + "_" + methodName;
 			}
 
-			if (methodSymbol.IsOrdinaryMethod())
+			if (methodSymbol.IsOrdinaryMethod() || methodSymbol.IsIndexerAccessor())
 			{
 				if (methodSymbol.Parameters.Any())
 				{
