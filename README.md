@@ -12,6 +12,7 @@ Please read the documentation below to learn more about how to install and use S
 Documentation 
 =======
 * [Tutorial](Documentation/Tutorial.md).
+* [Developers Documentation](Documentation/DeveloperDocumentation.md) (for contributors)
 
 Contribute!
 =======
