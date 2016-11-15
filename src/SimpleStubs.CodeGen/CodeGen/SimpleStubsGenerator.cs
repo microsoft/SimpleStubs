@@ -37,6 +37,14 @@ namespace Etg.SimpleStubs.CodeGen
             usings.Add("System");
             usings.Add("System.Runtime.CompilerServices");
             usings.Add("Etg.SimpleStubs");
+
+            if (_config.StubCurrentProject)
+            {
+                var currentStubRes = await _projectStubber.StubProject(currentProject, cu);
+                cu = currentStubRes.CompilationUnit;
+                usings.UnionWith(currentStubRes.Usings);
+            }
+
             foreach (ProjectReference projectRef in currentProject.ProjectReferences)
             {
                 Project project = workspace.CurrentSolution.GetProject(projectRef.ProjectId);
