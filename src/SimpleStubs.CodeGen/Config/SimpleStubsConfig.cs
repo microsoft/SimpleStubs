@@ -6,11 +6,13 @@ namespace Etg.SimpleStubs.CodeGen.Config
     {
         public SimpleStubsConfig(IEnumerable<string> ignoredProjects,
             IEnumerable<string> ignoredInterfaces,
-            bool stubInternalInterfaces)
+            bool stubInternalInterfaces,
+            bool stubCurrentProject)
         {
             IgnoredProjects = new HashSet<string>(ignoredProjects);
             IgnoredInterfaces = new HashSet<string>(ignoredInterfaces);
             StubInternalInterfaces = stubInternalInterfaces;
+            StubCurrentProject = stubCurrentProject;
         }
 
         public ISet<string> IgnoredProjects { get; }
@@ -18,5 +20,7 @@ namespace Etg.SimpleStubs.CodeGen.Config
         public ISet<string> IgnoredInterfaces { get; }
 
         public bool StubInternalInterfaces { get; }
+
+        public bool StubCurrentProject { get; }
     }
 }
