@@ -181,7 +181,7 @@ SimpleStubs also supports an optional configuration file that can be added to th
         "MyNamespace.IBarInterface"
     ],
     "StubInternalInterfaces": false,
-	"StubCurrentProject": false     
+    "StubCurrentProject": false     
 }
 ```
 
@@ -190,7 +190,7 @@ The configuration file allows you to instruct SimpleStubs to omit creating stubs
 
 It's also possible to instruct SimpleStubs to create stubs for internal interfaces (by default only public interfaces are stubbed) as shown in the configuration sample above.
 
-It's also possible to generate stubs for interfaces from current project (no tonly referenced projects) as shown in the configuration sample above. It's useful if you use shared project as reference.
+It's also possible to generate stubs for interfaces from the current project (not only referenced projects) as shown in the configuration sample above. This is useful if you'd like to generate stubs for interfaces that are defined in your test project or in a shared project.
 
 ## Tips and Tricks
 

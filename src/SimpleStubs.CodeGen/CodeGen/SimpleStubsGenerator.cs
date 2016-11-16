@@ -32,27 +32,20 @@ namespace Etg.SimpleStubs.CodeGen
                 throw new ArgumentException("Could not open the project located at " + testProjectPath);
             }
 
+            List<Project> projectsToStub = GetListOfProjectsToStub(workspace, currentProject);
+            if(!projectsToStub.Any())
+            {
+                return string.Empty;
+            }
+
             CompilationUnitSyntax cu = SF.CompilationUnit();
             var usings = new HashSet<string>();
             usings.Add("System");
             usings.Add("System.Runtime.CompilerServices");
             usings.Add("Etg.SimpleStubs");
 
-            if (_config.StubCurrentProject)
+            foreach (Project project in projectsToStub)
             {
-                var currentStubRes = await _projectStubber.StubProject(currentProject, cu);
-                cu = currentStubRes.CompilationUnit;
-                usings.UnionWith(currentStubRes.Usings);
-            }
-
-            foreach (ProjectReference projectRef in currentProject.ProjectReferences)
-            {
-                Project project = workspace.CurrentSolution.GetProject(projectRef.ProjectId);
-                if (_config.IgnoredProjects.Contains(project.Name))
-                {
-                    continue;
-                }
-
                 var res = await _projectStubber.StubProject(project, cu);
                 cu = res.CompilationUnit;
                 usings.UnionWith(res.Usings);
@@ -60,6 +53,27 @@ namespace Etg.SimpleStubs.CodeGen
 
             cu = cu.AddUsings(usings.Select(@using => SF.UsingDirective(SF.IdentifierName(@using))).ToArray());
             return Formatter.Format(cu, workspace).ToString();
+        }
+
+        private List<Project> GetListOfProjectsToStub(MSBuildWorkspace workspace, Project currentProject)
+        {
+            var projectsToStub = new List<Project>();
+
+            if (_config.StubCurrentProject)
+            {
+                projectsToStub.Add(currentProject);
+            }
+
+            foreach (ProjectReference projectRef in currentProject.ProjectReferences)
+            {
+                Project project = workspace.CurrentSolution.GetProject(projectRef.ProjectId);
+                if (!_config.IgnoredProjects.Contains(project.Name))
+                {
+                    projectsToStub.Add(project);
+                }
+            }
+
+            return projectsToStub;
         }
     }
 }
