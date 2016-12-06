@@ -1,6 +1,6 @@
 # Developer Documentation
 
-This document is targeted for developers who would like to undertand and potentially contribute to the SimpleStubs source code.
+This document is targeted for developers who would like to understand and potentially contribute to the SimpleStubs source code.
 
 ## Build & Code Generation
 SimpleStubs used Roslyn to generate stubs. The code is generated during the build (right before the build actually). 
