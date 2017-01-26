@@ -9,8 +9,7 @@ namespace Etg.SimpleStubs.CodeGen
 
     internal class PropertyStubber : IPropertyStubber
     {
-        public ClassDeclarationSyntax StubProperty(ClassDeclarationSyntax classDclr, IPropertySymbol propertySymbol,
-            INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubProperty(ClassDeclarationSyntax classDclr, IPropertySymbol propertySymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             string indexerType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             BasePropertyDeclarationSyntax propDclr = null;
@@ -19,12 +18,13 @@ namespace Etg.SimpleStubs.CodeGen
             {
                 IMethodSymbol getMethodSymbol = propertySymbol.GetMethod;
                 string parameters = StubbingUtils.FormatParameters(getMethodSymbol);
-
+                
                 string delegateTypeName = NamingUtils.GetDelegateTypeName(getMethodSymbol, stubbedInterface);
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, getMethodSymbol.Name, parameters))
+                        StubbingUtils.GetInvocationBlockSyntax(delegateTypeName, getMethodSymbol.Name, parameters, 
+                        null, false, getMethodSymbol.ReturnType, semanticModel)
                     })));
 
                 propDclr = CreatePropertyDclr(getMethodSymbol, indexerType);
@@ -39,7 +39,8 @@ namespace Etg.SimpleStubs.CodeGen
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, setMethodSymbol.Name, parameters))
+                        StubbingUtils.GetInvocationBlockSyntax(delegateTypeName, setMethodSymbol.Name, 
+                        parameters, null, true, null, semanticModel)
                     })));
                 if (propDclr == null)
                 {

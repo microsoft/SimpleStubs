@@ -99,6 +99,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGen\FluentConfigurationStubber.cs" />
+    <Compile Include="CodeGen\IFluentConfigurationStubber.cs" />
     <Compile Include="CodeGen\IInterfaceStubber.cs" />
     <Compile Include="CodeGen\InterfaceStubber.cs" />
     <Compile Include="CodeGen\IProjectStubber.cs" />

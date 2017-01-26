@@ -9,8 +9,7 @@ namespace Etg.SimpleStubs.CodeGen
 {
     internal class OrdinaryMethodStubber : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
-            INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubMethod(CompilationUnitSyntax cu, ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             if (!methodSymbol.IsOrdinaryMethod())
             {
@@ -28,15 +27,13 @@ namespace Etg.SimpleStubs.CodeGen
 
             string delegateTypeName = NamingUtils.GetDelegateTypeName(methodSymbol, stubbedInterface);
             string parameters = StubbingUtils.FormatParameters(methodSymbol);
+            var outParameters = methodSymbol.Parameters.Where(p => p.RefKind == RefKind.Out);
 
-            string callDelegateStmt = StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, methodSymbol.GetGenericName(), parameters);
-            if (!methodSymbol.ReturnsVoid)
-            {
-                callDelegateStmt = callDelegateStmt.Insert(0, "return ");
-            }
+            var methodBlock = StubbingUtils.GetInvocationBlockSyntax(delegateTypeName,
+                methodSymbol.GetGenericName(),
+                parameters, outParameters, methodSymbol.ReturnsVoid, methodSymbol.ReturnType, semanticModel);
 
-            classDclr = classDclr.AddMembers(
-                methodDclr.WithBody(SF.Block(SF.ParseStatement(callDelegateStmt))));
+            classDclr = classDclr.AddMembers(methodDclr.WithBody(methodBlock));
 
             return classDclr;
         }

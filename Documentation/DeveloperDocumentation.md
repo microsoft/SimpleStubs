@@ -16,6 +16,7 @@ If you follow the source code starting at [SimpleStubsGenerator](https://github.
         {
             _propertyStubbers = propertyStubbers;
             _methodStubbers = new List<IMethodStubber>(methodStubbers);
+            _configStubber = configStubber;
         }
 ```
 

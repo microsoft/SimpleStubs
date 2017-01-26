@@ -1,11 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Etg.SimpleStubs.CodeGen.Config;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Etg.SimpleStubs.CodeGen
 {
     internal interface IInterfaceStubber
     {
-        CompilationUnitSyntax StubInterface(CompilationUnitSyntax cu, InterfaceDeclarationSyntax interfaceDclr,
-            SemanticModel semanticModel);
+        CompilationUnitSyntax StubInterface(CompilationUnitSyntax cu, InterfaceDeclarationSyntax interfaceDclr, SemanticModel semanticModel, SimpleStubsConfig config);
     }
 }

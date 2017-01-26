@@ -166,6 +166,18 @@ stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite:true);
 // other test code
 ```
 
+## Default behaviors
+
+In the default ```MockBehavior.Stict``` mode, stubs that are called before their behaviors have been set will throw an exception. This can be changed—so that uninitialized stubs will return ```null``` or a default value—by using ```MockBehavior.Loose```:
+
+```csharp
+var stub = new StubIPhoneBook()
+    .WithDefaultBehavior(MockBehavior.Loose);
+IPhoneBook phoneBook = stub;
+phoneBook.GetContactPhoneNumber("John", "Smith"); // Returns 0
+```
+
+
 ## Configuration
 
 SimpleStubs also supports an optional configuration file that can be added to the root of your test project. The configuration file (named `SimpleStubs.json`) has the following structure:
@@ -181,7 +193,8 @@ SimpleStubs also supports an optional configuration file that can be added to th
         "MyNamespace.IBarInterface"
     ],
     "StubInternalInterfaces": false,
-    "StubCurrentProject": false     
+    "StubCurrentProject": false,
+    "DefaultMockBehavior": "Strict"
 }
 ```
 
@@ -191,6 +204,8 @@ The configuration file allows you to instruct SimpleStubs to omit creating stubs
 It's also possible to instruct SimpleStubs to create stubs for internal interfaces (by default only public interfaces are stubbed) as shown in the configuration sample above.
 
 It's also possible to generate stubs for interfaces from the current project (not only referenced projects) as shown in the configuration sample above. This is useful if you'd like to generate stubs for interfaces that are defined in your test project or in a shared project.
+
+Loose mode can be turned on for all stubs by changing the DefaultMockBehavior setting to "Loose". The default setting if omitted is "Strict".
 
 ## Tips and Tricks
 

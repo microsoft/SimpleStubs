@@ -25,17 +25,17 @@ namespace Etg.SimpleStubs.CodeGen.DI
 
             cb.Register((c) =>
             {
-                IInterfaceStubber interfaceStubber = new InterfaceStubber(
-                    new IMethodStubber[]
-                    {
-                        new OrdinaryMethodStubber(),
-                        new EventStubber(),
-                        new StubbingDelegateGenerator()
-                    },
+                IInterfaceStubber interfaceStubber = new InterfaceStubber(new IMethodStubber[]
+                {
+                    new OrdinaryMethodStubber(),
+                    new EventStubber(),
+                    new StubbingDelegateGenerator()
+                },
                     new IPropertyStubber[]
                     {
                         new PropertyStubber()
-                    });
+                    },
+                    new FluentConfigurationStubber());
                 return interfaceStubber;
             }).As<IInterfaceStubber>().SingleInstance();
 

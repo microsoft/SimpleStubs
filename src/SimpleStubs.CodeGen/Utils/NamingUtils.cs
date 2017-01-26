@@ -60,7 +60,6 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 			return methodName;
         }
 
-
         public static string SerializeName(ISymbol param)
         {
             StringBuilder sb = new StringBuilder();
@@ -89,6 +88,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 
             return sb.ToString();
         }
+
 
         public static string GetStubName(string interfaceName)
         {

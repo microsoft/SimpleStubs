@@ -101,11 +101,70 @@ namespace TestClassLibraryTest
         }
 
         [TestMethod]
+        public void TestMockBehaviorLooseOnMethodCall()
+        {
+            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Loose);
+            IPhoneBook phoneBook = stub;
+            Assert.AreEqual(0, phoneBook.GetContactPhoneNumber("John", "Smith"));
+        }
+
+        [TestMethod]
+        public async Task TestMockBehaviorLooseOnAsyncMethodCall()
+        {
+            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            ITestInterface testInterface = stub;
+            var result = await testInterface.DoSomething(10);
+            Assert.AreEqual(null, result);
+        }
+
+        [TestMethod]
+        public void TestMockBehaviorLooseWithOutParameters()
+        {
+            var stub = new StubIContainer().WithDefaultBehavior(MockBehavior.Loose);
+            IContainer container = stub;
+            object outParam;
+            Assert.AreEqual(false, container.GetElement(1, out outParam));
+            Assert.AreEqual(null, outParam);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SimpleStubsException))]
+        public void TestMockBehaviorStrictOnMethodCall()
+        {
+            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Strict);
+            IPhoneBook phoneBook = stub;
+            Assert.AreEqual(0, phoneBook.GetContactPhoneNumber("John", "Smith"));
+        }
+
+        [TestMethod]
+        public void TestThatLooseMockBehaviorsAreAlwaysOverwritten()
+        {
+            var stub = new StubIPhoneBook()
+                .WithDefaultBehavior(MockBehavior.Loose)
+                .GetContactPhoneNumber((p1, p2) => 12345678);
+
+            IPhoneBook phoneBook = stub;
+            Assert.AreEqual(12345678, phoneBook.GetContactPhoneNumber("John", "Smith"));
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(SimpleStubsException))]
 
         public void TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected()
         {
             var stub = new StubIPhoneBook().GetContactPhoneNumber((p1, p2) => 12345678, Times.Once);
+            IPhoneBook phoneBook = stub;
+            phoneBook.GetContactPhoneNumber("John", "Smith");
+            phoneBook.GetContactPhoneNumber("John", "Smith");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SimpleStubsException))]
+        public void TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected_WithMockBehaviorLoose()
+        {
+            var stub = new StubIPhoneBook()
+                .WithDefaultBehavior(MockBehavior.Loose)
+                .GetContactPhoneNumber((p1, p2) => 12345678, Times.Once);
             IPhoneBook phoneBook = stub;
             phoneBook.GetContactPhoneNumber("John", "Smith");
             phoneBook.GetContactPhoneNumber("John", "Smith");

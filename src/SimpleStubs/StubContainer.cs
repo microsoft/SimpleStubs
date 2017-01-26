@@ -29,13 +29,38 @@ namespace Etg.SimpleStubs
 
             try
             {
-                return (TDelegate) sequenceContainer.Next;
+                return (TDelegate)sequenceContainer.Next;
             }
             catch (SequenceContainerException)
             {
                 throw new SimpleStubsException(
                     $"The stub of method {methodName} was called more than expected");
             }
+        }
+
+        public bool TryGetMethodStub<TDelegate>(string methodName, out TDelegate del)
+        {
+            string key = ToUniqueId<TDelegate>();
+            SequenceContainer<object> sequenceContainer;
+            _stubs.TryGetValue(key, out sequenceContainer);
+            if (sequenceContainer == null)
+            {
+                del = default(TDelegate);
+
+                return false;
+            }
+
+            try
+            {
+                del = (TDelegate)sequenceContainer.Next;
+            }
+            catch (SequenceContainerException)
+            {
+                throw new SimpleStubsException(
+                    $"The stub of method {methodName} was called more than expected");
+            }
+
+            return true;
         }
 
         public void SetMethodStub<TDelegate>(TDelegate del, int count, bool overwrite)

@@ -6,5 +6,6 @@
     "IgnoredInterfaces": [
         "TestClassLibrary.IIgnoredInterface"
     ],
-    "StubInternalInterfaces": true
+    "StubInternalInterfaces": true,
+    "DefaultMockBehavior": "Strict"
 }
