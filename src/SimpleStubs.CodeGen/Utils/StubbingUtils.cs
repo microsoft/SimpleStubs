@@ -26,6 +26,10 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             {
                 defaultReturnInvocation.Add(SF.ParseStatement(GetDefaultReturnInvocationStatement(returnType, semanticModel)));
             }
+            else
+            {
+                defaultReturnInvocation.Add(SF.ParseStatement("return;"));
+            }
 
             statements.Add(SF.Block(
                 SF.ParseStatement($"if (!_stubs.TryGetMethodStub<{delegateTypeName}>(\"{methodName}\", out del))"),
