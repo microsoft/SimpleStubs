@@ -70,7 +70,7 @@ namespace Etg.SimpleStubs.CodeGen
                 foreach (IMethodStubber methodStubber in _methodStubbers)
                 {
                     
-                    classDclr = methodStubber.StubMethod(cu, classDclr, methodSymbol, interfaceType, semanticModel);
+                    classDclr = methodStubber.StubMethod(classDclr, methodSymbol, interfaceType, semanticModel);
                 }
             }
             return classDclr;

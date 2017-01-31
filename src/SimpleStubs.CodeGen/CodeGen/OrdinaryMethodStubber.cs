@@ -9,7 +9,7 @@ namespace Etg.SimpleStubs.CodeGen
 {
     internal class OrdinaryMethodStubber : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(CompilationUnitSyntax cu, ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
+        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             if (!methodSymbol.IsOrdinaryMethod())
             {

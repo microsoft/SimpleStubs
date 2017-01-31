@@ -168,7 +168,7 @@ stub.GetContactPhoneNumber((p1, p2) => 11122233, overwrite:true);
 
 ## Default behaviors
 
-In the default ```MockBehavior.Stict``` mode, stubs that are called before their behaviors have been set will throw an exception. This can be changed—so that uninitialized stubs will return ```null``` or a default value—by using ```MockBehavior.Loose```:
+In the default ```MockBehavior.Strict``` mode, stubs that are called before their behaviors have been set will throw an exception. This can be changed—so that uninitialized stubs will return ```null``` or a default value—by using ```MockBehavior.Loose```:
 
 ```csharp
 var stub = new StubIPhoneBook()
