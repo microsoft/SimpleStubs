@@ -14,8 +14,7 @@ namespace Etg.SimpleStubs.CodeGen
     /// </summary>
     internal class EventStubber : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
-            INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             // only handle EventAdd and ignore EventRemove because we only need to stub the event once
             if (!methodSymbol.IsEventAdd())

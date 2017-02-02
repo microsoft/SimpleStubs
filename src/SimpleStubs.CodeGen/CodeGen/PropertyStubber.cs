@@ -1,3 +1,4 @@
+using System.Linq;
 using Etg.SimpleStubs.CodeGen.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,8 +10,7 @@ namespace Etg.SimpleStubs.CodeGen
 
     internal class PropertyStubber : IPropertyStubber
     {
-        public ClassDeclarationSyntax StubProperty(ClassDeclarationSyntax classDclr, IPropertySymbol propertySymbol,
-            INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubProperty(ClassDeclarationSyntax classDclr, IPropertySymbol propertySymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             string indexerType = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             BasePropertyDeclarationSyntax propDclr = null;
@@ -24,22 +24,25 @@ namespace Etg.SimpleStubs.CodeGen
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement("return " + StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, getMethodSymbol.Name, parameters))
+                        StubbingUtils.GetInvocationBlockSyntax(delegateTypeName, getMethodSymbol.Name, parameters, 
+                        Enumerable.Empty<IParameterSymbol>(), getMethodSymbol.ReturnType, semanticModel)
                     })));
 
                 propDclr = CreatePropertyDclr(getMethodSymbol, indexerType);
                 propDclr = propDclr.AddAccessorListAccessors(accessorDclr);
-                
             }
+                
             if (propertySymbol.SetMethod != null)
             {
+                var voidType = semanticModel.Compilation.GetTypeByMetadataName("System.Void");
                 IMethodSymbol setMethodSymbol = propertySymbol.SetMethod;
                 string parameters = $"{StubbingUtils.FormatParameters(setMethodSymbol)}";
                 string delegateTypeName = NamingUtils.GetDelegateTypeName(setMethodSymbol, stubbedInterface);
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration, SF.Block(
                     SF.List(new[]
                     {
-                        SF.ParseStatement(StubbingUtils.GenerateInvokeDelegateStmt(delegateTypeName, setMethodSymbol.Name, parameters))
+                        StubbingUtils.GetInvocationBlockSyntax(delegateTypeName, setMethodSymbol.Name, parameters, 
+                        Enumerable.Empty<IParameterSymbol>(), voidType, semanticModel)
                     })));
                 if (propDclr == null)
                 {

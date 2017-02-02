@@ -47,7 +47,7 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                         if (!_config.IgnoredInterfaces.Contains(interfaceType.GetQualifiedName()))
                         {
                             LogWarningsIfAny(semanticModel);
-                            cu = _interfaceStubber.StubInterface(cu, interfaceDclr, semanticModel);
+                            cu = _interfaceStubber.StubInterface(cu, interfaceDclr, semanticModel, _config);
                         }
                     }
                     catch (Exception e)

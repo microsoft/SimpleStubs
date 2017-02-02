@@ -18,24 +18,39 @@ namespace Etg.SimpleStubs
 
         public TDelegate GetMethodStub<TDelegate>(string methodName)
         {
-            string key = ToUniqueId<TDelegate>();
-            SequenceContainer<object> sequenceContainer;
-            _stubs.TryGetValue(key, out sequenceContainer);
-            if (sequenceContainer == null)
+            TDelegate del;
+            if (!TryGetMethodStub(methodName, out del))
             {
                 throw new SimpleStubsException(
                     $"The stub {_stubTypeName} does not contain a stub for the method {methodName}");
             }
 
+            return del;
+        }
+
+        public bool TryGetMethodStub<TDelegate>(string methodName, out TDelegate del)
+        {
+            string key = ToUniqueId<TDelegate>();
+            SequenceContainer<object> sequenceContainer;
+            _stubs.TryGetValue(key, out sequenceContainer);
+            if (sequenceContainer == null)
+            {
+                del = default(TDelegate);
+
+                return false;
+            }
+
             try
             {
-                return (TDelegate) sequenceContainer.Next;
+                del = (TDelegate)sequenceContainer.Next;
             }
             catch (SequenceContainerException)
             {
                 throw new SimpleStubsException(
                     $"The stub of method {methodName} was called more than expected");
             }
+
+            return true;
         }
 
         public void SetMethodStub<TDelegate>(TDelegate del, int count, bool overwrite)

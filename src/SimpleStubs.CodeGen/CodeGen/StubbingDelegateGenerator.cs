@@ -1,6 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Etg.SimpleStubs.CodeGen.Utils;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace Etg.SimpleStubs.CodeGen
 {
@@ -10,8 +12,7 @@ namespace Etg.SimpleStubs.CodeGen
 
     internal class StubbingDelegateGenerator : IMethodStubber
     {
-        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
-            INamedTypeSymbol stubbedInterface)
+        public ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel)
         {
             if (methodSymbol.IsPropertyAccessor() || methodSymbol.IsOrdinaryMethod())
             {

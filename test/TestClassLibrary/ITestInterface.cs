@@ -14,6 +14,8 @@ namespace TestClassLibrary
     {
         long GetContactPhoneNumber(string firstName, string lastName);
 
+        Task<long> GetContactPhoneNumberAsync(string firstName, string lastName);
+
         long MyNumber { get; set; }
 
         int ContactsCount { get; }
@@ -29,10 +31,14 @@ namespace TestClassLibrary
     public interface IContainer
     {
         T GetElement<T>(int index);
+
+        Task<T> GetElementAsync<T>(int index);
+
         void SetElement<T>(int index, T value);
 
-        bool GetElement(int index, out object value);
+        Task SetElementAsync<T>(int index, T value);
 
+        bool GetElement(int index, out object value);
     }
 
     public interface IRefUtils
@@ -42,15 +48,21 @@ namespace TestClassLibrary
 
     public interface ITestInterface : IDisposable
     {
+        void DoSomething();
+
         void DoSomething(string s, int x);
 
         void DoSomething(List<IEnumerable<string>> list);
 
         void DoSomething(string[] array);
 
-        Task<List<int>> DoSomething(int parameter);
+        Task DoSomethingAsync();
+
+        Task<List<int>> DoSomethingAsync(int parameter);
 
         void SetDictionary(Dictionary<string, string> dict);
+
+        Task SetDictionaryAsync(Dictionary<string, string> dict);
 
         string Prop1 { get; }
 

@@ -107,8 +107,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AsyncMethodStubsTest.cs" />
+    <Compile Include="EventStubsTest.cs" />
+    <Compile Include="IndexerStubsTest.cs" />
+    <Compile Include="MethodStubsTest.cs" />
     <Compile Include="Properties\SimpleStubs.generated.cs" />
-    <Compile Include="UnitTest.cs" />
+    <Compile Include="PropertyStubsTest.cs" />
+    <Compile Include="StubGeneratorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

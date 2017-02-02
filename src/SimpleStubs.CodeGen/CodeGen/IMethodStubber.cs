@@ -5,7 +5,6 @@ namespace Etg.SimpleStubs.CodeGen
 {
     internal interface IMethodStubber
     {
-        ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol,
-            INamedTypeSymbol stubbedInterface);
+        ClassDeclarationSyntax StubMethod(ClassDeclarationSyntax classDclr, IMethodSymbol methodSymbol, INamedTypeSymbol stubbedInterface, SemanticModel semanticModel);
     }
 }
