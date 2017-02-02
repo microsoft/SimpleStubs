@@ -13,7 +13,7 @@ namespace Etg.SimpleStubs.CodeGen.Config
                 return JsonConvert.DeserializeObject<SimpleStubsConfig>(File.ReadAllText(configFilePath));
             }
 
-            return new SimpleStubsConfig(new string[] {}, new string[] {}, false, false, "Strict");
+            return new SimpleStubsConfig(new string[] {}, new string[] {}, false, false, "Loose");
         }
     }
 }
