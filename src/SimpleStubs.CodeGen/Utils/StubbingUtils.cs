@@ -1,25 +1,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace Etg.SimpleStubs.CodeGen.Utils
 {
-    internal class StubbingUtils
+    internal static class StubbingUtils
     {
         public static BlockSyntax GetInvocationBlockSyntax(string delegateTypeName, string methodName, string parameters, 
-            IEnumerable<IParameterSymbol> outParameters, bool returnsVoid, ITypeSymbol returnType, SemanticModel semanticModel)
+            IEnumerable<IParameterSymbol> outParameters, ITypeSymbol returnType, SemanticModel semanticModel)
         {
+            var voidType = semanticModel.Compilation.GetTypeByMetadataName("System.Void");
+            bool returnsVoid = returnType.Equals(voidType);
             var statements = new List<StatementSyntax>();
             string returnStatement = returnsVoid ? string.Empty : "return ";
 
-            statements.Add(SF.ParseStatement($"{delegateTypeName} del;"));
+            statements.Add(SF.ParseStatement($"{delegateTypeName} del;\n"));
             statements.Add(SF.ParseStatement("if (_mockBehavior == MockBehavior.Strict)"));
             statements.Add(SF.Block(SF.ParseStatement($"del = _stubs.GetMethodStub<{delegateTypeName}>(\"{methodName}\");")));
             statements.Add(SF.ParseStatement("else"));
 
-            var defaultReturnInvocation = (outParameters ?? new List<IParameterSymbol>()).Select(p =>
+            var defaultReturnInvocation = outParameters.Select(p =>
                 SF.ParseStatement($"{p.Name} = default ({p.Type.GetGenericName()});")).ToList();
 
             if (!returnsVoid)

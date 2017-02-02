@@ -29,9 +29,8 @@ namespace Etg.SimpleStubs.CodeGen
             string parameters = StubbingUtils.FormatParameters(methodSymbol);
             var outParameters = methodSymbol.Parameters.Where(p => p.RefKind == RefKind.Out);
 
-            var methodBlock = StubbingUtils.GetInvocationBlockSyntax(delegateTypeName,
-                methodSymbol.GetGenericName(),
-                parameters, outParameters, methodSymbol.ReturnsVoid, methodSymbol.ReturnType, semanticModel);
+            var methodBlock = StubbingUtils.GetInvocationBlockSyntax(delegateTypeName, methodSymbol.GetGenericName(),
+                parameters, outParameters, methodSymbol.ReturnType, semanticModel);
 
             classDclr = classDclr.AddMembers(methodDclr.WithBody(methodBlock));
 
