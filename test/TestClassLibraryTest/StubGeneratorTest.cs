@@ -60,8 +60,10 @@ namespace TestClassLibraryTest
 
             // Switch to loose mode, do not expect exception
             stub.MockBehavior = MockBehavior.Loose;
+            testInterface.DoSomething();
 
-            // SWitch back to strict mode and check for exception
+            // Switch back to strict mode and check for exception
+            stub.MockBehavior = MockBehavior.Strict;
             try
             {
                 testInterface.DoSomething();

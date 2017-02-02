@@ -124,12 +124,12 @@ namespace Etg.SimpleStubs.CodeGen
 
         private static string GetValidMockBehaviorEnumValue(string suppliedValue)
         {
-            if ("Loose".Equals(suppliedValue, StringComparison.OrdinalIgnoreCase))
+            if ("Strict".Equals(suppliedValue, StringComparison.OrdinalIgnoreCase))
             {
-                return "Loose";
+                return "Strict";
             }
 
-            return "Strict";
+            return "Loose";
         }
 
         private static NamespaceDeclarationSyntax GetNamespaceNode(InterfaceDeclarationSyntax interfaceNode)

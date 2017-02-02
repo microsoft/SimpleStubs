@@ -129,15 +129,6 @@ namespace TestClassLibraryTest
 
         [TestMethod]
         [ExpectedException(typeof(SimpleStubsException))]
-        public void TestThatExceptionIsThrownWhenStubIsNotSetup()
-        {
-            var stub = new StubIPhoneBook();
-            IPhoneBook phoneBook = stub;
-            phoneBook.GetContactPhoneNumber("John", "Smith");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(SimpleStubsException))]
         public void TestMethod_WithReturnType_WithParameters_DefaultBehavior_Strict()
         {
             var stub = new StubIPhoneBook(MockBehavior.Strict);
@@ -155,6 +146,15 @@ namespace TestClassLibraryTest
         }
 
         // Test with uninitialized stubs (loose mode)
+
+        [TestMethod]
+        public void TestThatDefaultBehaviorIsUsedWhenStubIsNotSetup()
+        {
+            var stub = new StubIPhoneBook();
+            IPhoneBook phoneBook = stub;
+            var result = phoneBook.GetContactPhoneNumber("John", "Smith");
+            Assert.AreEqual(0, result);
+        }
 
         [TestMethod]
         public void TestMethod_WithReturnType_WithParameters_DefaultBehavior_Loose()

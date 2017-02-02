@@ -99,15 +99,6 @@ namespace TestClassLibraryTest
 
         [TestMethod]
         [ExpectedException(typeof(SimpleStubsException))]
-        public async Task TestThatExceptionIsThrownWhenStubIsNotSetup_Async()
-        {
-            var stub = new StubIPhoneBook();
-            IPhoneBook phoneBook = stub;
-            await phoneBook.GetContactPhoneNumberAsync("John", "Smith");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(SimpleStubsException))]
         public async Task TestMethod_WithReturnType_WithParameters_DefaultBehavior_Strict_Async()
         {
             var stub = new StubIPhoneBook(MockBehavior.Strict);
@@ -125,6 +116,15 @@ namespace TestClassLibraryTest
         }
 
         // Test with uninitialized stubs (loose mode)
+
+        [TestMethod]
+        public async Task TestThatDefaultBehaviorIsUsedWhenStubIsNotSetup_Async()
+        {
+            var stub = new StubIPhoneBook();
+            IPhoneBook phoneBook = stub;
+            var result = await phoneBook.GetContactPhoneNumberAsync("John", "Smith");
+            Assert.AreEqual(0, result);
+        }
 
         [TestMethod]
         public async Task TestMethod_WithReturnType_WithParameters_DefaultBehavior_Loose_Async()
