@@ -14,13 +14,11 @@ namespace Etg.SimpleStubs.CodeGen
     {
         private readonly IEnumerable<IMethodStubber> _methodStubbers;
         private readonly IEnumerable<IPropertyStubber> _propertyStubbers;
-        private readonly IFluentConfigurationStubber _configStubber;
 
-        public InterfaceStubber(IEnumerable<IMethodStubber> methodStubbers, IEnumerable<IPropertyStubber> propertyStubbers, IFluentConfigurationStubber configStubber)
+        public InterfaceStubber(IEnumerable<IMethodStubber> methodStubbers, IEnumerable<IPropertyStubber> propertyStubbers)
         {
             _propertyStubbers = propertyStubbers;
             _methodStubbers = new List<IMethodStubber>(methodStubbers);
-            _configStubber = configStubber;
         }
 
         public CompilationUnitSyntax StubInterface(CompilationUnitSyntax cu, InterfaceDeclarationSyntax interfaceDclr, SemanticModel semanticModel, SimpleStubsConfig config)
@@ -38,8 +36,8 @@ namespace Etg.SimpleStubs.CodeGen
             classDclr = AddStubContainerField(classDclr, stubName);
             classDclr = AddMockBehaviorField(classDclr, config);
             classDclr = StubProperties(interfaceType, classDclr, semanticModel);
-            classDclr = StubMethods(interfaceType, classDclr, cu, semanticModel);
-            classDclr = _configStubber.StubMockBehaviorConfigurationMethod(interfaceType, classDclr);
+            classDclr = StubMethods(interfaceType, classDclr, semanticModel);
+            classDclr = AddMockBehaviorConfigurationMethod(interfaceType, classDclr);
 
             string fullNameSpace = semanticModel.GetDeclaredSymbol(namespaceNode).ToString();
             NamespaceDeclarationSyntax namespaceDclr = SF.NamespaceDeclaration(SF.IdentifierName(fullNameSpace))
@@ -62,7 +60,7 @@ namespace Etg.SimpleStubs.CodeGen
             return classDclr;
         }
 
-        private ClassDeclarationSyntax StubMethods(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr, CompilationUnitSyntax cu, SemanticModel semanticModel)
+        private ClassDeclarationSyntax StubMethods(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr, SemanticModel semanticModel)
         {
             IEnumerable<IMethodSymbol> methodsToStub = RoslynUtils.GetAllMembers<IMethodSymbol>(interfaceType);
             foreach (IMethodSymbol methodSymbol in methodsToStub)
@@ -102,6 +100,26 @@ namespace Etg.SimpleStubs.CodeGen
                                 SF.EqualsValueClause(SF.ParseExpression($"MockBehavior.{defaultMockBehavior}")))
                         })))
                     .AddModifiers(SF.Token(SyntaxKind.PrivateKeyword)));
+            return classDclr;
+        }
+
+        private static ClassDeclarationSyntax AddMockBehaviorConfigurationMethod(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr)
+        {
+            string interfaceName = interfaceType.GetGenericName();
+            string stubName = NamingUtils.GetStubName(interfaceName);
+
+            MethodDeclarationSyntax methodDclr = SF.MethodDeclaration(SF.ParseTypeName(stubName), "WithDefaultBehavior")
+                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
+                .AddParameterListParameters(SF.Parameter(SF.Identifier("mockBehavior")).WithType(SF.ParseTypeName("MockBehavior")))
+                .AddBodyStatements(SF.ExpressionStatement(
+                    SF.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SF.IdentifierName("_mockBehavior"),
+                        SF.IdentifierName("mockBehavior"))))
+                .AddBodyStatements(SF.ReturnStatement(SF.IdentifierName("this")));
+
+            classDclr = classDclr.AddMembers(methodDclr);
+
             return classDclr;
         }
 

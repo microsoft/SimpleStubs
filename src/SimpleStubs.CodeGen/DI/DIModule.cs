@@ -34,8 +34,7 @@ namespace Etg.SimpleStubs.CodeGen.DI
                     new IPropertyStubber[]
                     {
                         new PropertyStubber()
-                    },
-                    new FluentConfigurationStubber());
+                    });
                 return interfaceStubber;
             }).As<IInterfaceStubber>().SingleInstance();
 
