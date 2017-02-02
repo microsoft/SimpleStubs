@@ -19,7 +19,7 @@ namespace Etg.SimpleStubs.CodeGen
             {
                 IMethodSymbol getMethodSymbol = propertySymbol.GetMethod;
                 string parameters = StubbingUtils.FormatParameters(getMethodSymbol);
-                
+
                 string delegateTypeName = NamingUtils.GetDelegateTypeName(getMethodSymbol, stubbedInterface);
                 var accessorDclr = SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, SF.Block(
                     SF.List(new[]
