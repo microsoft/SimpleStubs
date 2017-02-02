@@ -110,7 +110,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public async Task TestMethod_WithReturnType_WithParameters_DefaultBehavior_Strict_Async()
         {
-            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubIPhoneBook(MockBehavior.Strict);
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(0, await phoneBook.GetContactPhoneNumberAsync("John", "Smith"));
         }
@@ -119,7 +119,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public async Task TestMethod_Void_WithNoParameters_DefaultBehavior_Strict_Async()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             await testInterface.DoSomethingAsync();
         }
@@ -129,7 +129,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public async Task TestMethod_WithReturnType_WithParameters_DefaultBehavior_Loose_Async()
         {
-            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubIPhoneBook(MockBehavior.Loose);
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(0, await phoneBook.GetContactPhoneNumberAsync("John", "Smith"));
         }
@@ -137,7 +137,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public async Task TestMethod_Void_WithNoParameters_DefaultBehavior_Loose_Async()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             await testInterface.DoSomethingAsync();
         }
@@ -145,8 +145,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public async Task TestThatLooseMockBehaviorsAreAlwaysOverridden_Async()
         {
-            var stub = new StubIPhoneBook()
-                .WithDefaultBehavior(MockBehavior.Loose)
+            var stub = new StubIPhoneBook(MockBehavior.Loose)
                 .GetContactPhoneNumberAsync(async (p1, p2) => await Task.FromResult(12345678));
 
             IPhoneBook phoneBook = stub;
@@ -157,8 +156,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public async Task TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected_DefaultBehavior_Loose_Async()
         {
-            var stub = new StubIPhoneBook()
-                .WithDefaultBehavior(MockBehavior.Loose)
+            var stub = new StubIPhoneBook(MockBehavior.Loose)
                 .GetContactPhoneNumberAsync(async (p1, p2) => await Task.FromResult(12345678), Times.Once);
             IPhoneBook phoneBook = stub;
             await phoneBook.GetContactPhoneNumberAsync("John", "Smith");

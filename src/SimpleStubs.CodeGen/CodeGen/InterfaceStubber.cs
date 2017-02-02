@@ -34,10 +34,10 @@ namespace Etg.SimpleStubs.CodeGen
 
             classDclr = RoslynUtils.CopyGenericConstraints(interfaceType, classDclr);
             classDclr = AddStubContainerField(classDclr, stubName);
-            classDclr = AddMockBehaviorField(classDclr, config);
+            classDclr = AddMockBehaviorProperty(classDclr);
             classDclr = StubProperties(interfaceType, classDclr, semanticModel);
             classDclr = StubMethods(interfaceType, classDclr, semanticModel);
-            classDclr = AddMockBehaviorConfigurationMethod(interfaceType, classDclr);
+            classDclr = AddConstructor(interfaceType, classDclr, config);
 
             string fullNameSpace = semanticModel.GetDeclaredSymbol(namespaceNode).ToString();
             NamespaceDeclarationSyntax namespaceDclr = SF.NamespaceDeclaration(SF.IdentifierName(fullNameSpace))
@@ -45,6 +45,28 @@ namespace Etg.SimpleStubs.CodeGen
             namespaceDclr = namespaceDclr.AddMembers(classDclr);
             cu = cu.AddMembers(namespaceDclr);
             return cu;
+        }
+
+        private ClassDeclarationSyntax AddConstructor(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr, SimpleStubsConfig config)
+        {
+            string ctorName = NamingUtils.GetStubName(interfaceType.Name);
+            string defaultMockBehavior = GetValidMockBehaviorEnumValue(config.DefaultMockBehavior);
+
+            var ctorParameter =
+                SF.Parameter(SF.Identifier("mockBehavior"))
+                    .WithType(SF.ParseTypeName("MockBehavior"))
+                    .WithDefault(SF.EqualsValueClause(SF.ParseExpression($"MockBehavior.{defaultMockBehavior}")));
+
+            classDclr = classDclr.AddMembers(SF.ConstructorDeclaration(ctorName)
+                .WithModifiers(SF.TokenList(SF.Token(SyntaxKind.PublicKeyword)))
+                .WithParameterList(SF.ParameterList().AddParameters(ctorParameter))
+                .WithBody(SF.Block().AddStatements(SF.ExpressionStatement(
+                    SF.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SF.IdentifierName("MockBehavior"),
+                        SF.IdentifierName("mockBehavior")))
+                )));
+            return classDclr;
         }
 
         private ClassDeclarationSyntax StubProperties(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr, SemanticModel semanticModel)
@@ -88,37 +110,14 @@ namespace Etg.SimpleStubs.CodeGen
             return classDclr;
         }
 
-        private static ClassDeclarationSyntax AddMockBehaviorField(ClassDeclarationSyntax classDclr, SimpleStubsConfig config)
+        private static ClassDeclarationSyntax AddMockBehaviorProperty(ClassDeclarationSyntax classDclr)
         {
-            string defaultMockBehavior = GetValidMockBehaviorEnumValue(config.DefaultMockBehavior);
             classDclr = classDclr.AddMembers(
-                SF.FieldDeclaration(
-                    SF.VariableDeclaration(SF.ParseTypeName("MockBehavior"),
-                        SF.SeparatedList(new[]
-                        {
-                            SF.VariableDeclarator(SF.Identifier("_mockBehavior"), null,
-                                SF.EqualsValueClause(SF.ParseExpression($"MockBehavior.{defaultMockBehavior}")))
-                        })))
-                    .AddModifiers(SF.Token(SyntaxKind.PrivateKeyword)));
-            return classDclr;
-        }
-
-        private static ClassDeclarationSyntax AddMockBehaviorConfigurationMethod(INamedTypeSymbol interfaceType, ClassDeclarationSyntax classDclr)
-        {
-            string interfaceName = interfaceType.GetGenericName();
-            string stubName = NamingUtils.GetStubName(interfaceName);
-
-            MethodDeclarationSyntax methodDclr = SF.MethodDeclaration(SF.ParseTypeName(stubName), "WithDefaultBehavior")
-                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                .AddParameterListParameters(SF.Parameter(SF.Identifier("mockBehavior")).WithType(SF.ParseTypeName("MockBehavior")))
-                .AddBodyStatements(SF.ExpressionStatement(
-                    SF.AssignmentExpression(
-                        SyntaxKind.SimpleAssignmentExpression,
-                        SF.IdentifierName("_mockBehavior"),
-                        SF.IdentifierName("mockBehavior"))))
-                .AddBodyStatements(SF.ReturnStatement(SF.IdentifierName("this")));
-
-            classDclr = classDclr.AddMembers(methodDclr);
+                SF.PropertyDeclaration(SF.ParseTypeName("MockBehavior"), "MockBehavior")
+                    .AddAccessorListAccessors(
+                    SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken)),
+                    SF.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken)))
+                .WithModifiers(SF.TokenList(SF.Token(SyntaxKind.PublicKeyword))));
 
             return classDclr;
         }

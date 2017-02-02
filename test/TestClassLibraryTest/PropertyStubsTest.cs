@@ -35,7 +35,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestPropertyStubWithGetterAndSetter_Get_MockBehavior_Loose()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             string returnedValue = testInterface.Prop3;
             Assert.IsNull(returnedValue);
@@ -44,7 +44,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestPropertyStubWithGetterAndSetter_Set_MockBehavior_Loose()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             testInterface.Prop3 = string.Empty;
         }
@@ -52,7 +52,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestPropertyStubWithGetterOnly_Get_MockBehavior_Loose()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             string returnedValue = testInterface.Prop1;
             Assert.IsNull(returnedValue);
@@ -61,7 +61,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestPropertyStubWithSetterOnly_Set_MockBehavior_Loose()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             testInterface.Prop2 = string.Empty;
         }
@@ -70,7 +70,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestPropertyStubWithGetterAndSetter_Get_MockBehavior_Strict()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             string returnedValue = testInterface.Prop3;
         }
@@ -79,7 +79,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestPropertyStubWithGetterAndSetter_Set_MockBehavior_Strict()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             testInterface.Prop3 = string.Empty;
         }
@@ -88,7 +88,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestPropertyStubWithGetterOnly_Get_MockBehavior_Strict()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             string returnedValue = testInterface.Prop1;
         }
@@ -97,7 +97,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestPropertyStubWithSetterOnly_Set_MockBehavior_Strict()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             testInterface.Prop2 = string.Empty;
         }

@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Etg.SimpleStubs;
 using Etg.SimpleStubs.CodeGen;
 using Etg.SimpleStubs.CodeGen.DI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestClassLibrary;
 
 namespace TestClassLibraryTest
 {
@@ -21,6 +23,20 @@ namespace TestClassLibraryTest
                 new DiModule(path, @"..\..\Properties\SimpleStubs.generated.cs").StubsGenerator;
             string stubs = await stubsGenerator.GenerateStubs(path);
             File.WriteAllText(@"..\..\Properties\SimpleStubs.generated.cs", stubs);
+        }
+
+        [TestMethod]
+        public void TestMockBehaviorProperty_MatchesConstructorSuppliedValue_Loose()
+        {
+            StubITestInterface stub = new StubITestInterface(MockBehavior.Loose);
+            Assert.AreEqual(MockBehavior.Loose, stub.MockBehavior);
+        }
+
+        [TestMethod]
+        public void TestMockBehaviorProperty_MatchesConstructorSuppliedValue_Strict()
+        {
+            StubITestInterface stub = new StubITestInterface(MockBehavior.Strict);
+            Assert.AreEqual(MockBehavior.Strict, stub.MockBehavior);
         }
     }
 }

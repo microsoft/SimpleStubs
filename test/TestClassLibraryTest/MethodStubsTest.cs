@@ -140,7 +140,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestMethod_WithReturnType_WithParameters_DefaultBehavior_Strict()
         {
-            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubIPhoneBook(MockBehavior.Strict);
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(0, phoneBook.GetContactPhoneNumber("John", "Smith"));
         }
@@ -149,7 +149,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestMethod_Void_WithNoParameters_DefaultBehavior_Strict()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Strict);
+            var stub = new StubITestInterface(MockBehavior.Strict);
             ITestInterface testInterface = stub;
             testInterface.DoSomething();
         }
@@ -159,7 +159,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestMethod_WithReturnType_WithParameters_DefaultBehavior_Loose()
         {
-            var stub = new StubIPhoneBook().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubIPhoneBook(MockBehavior.Loose);
             IPhoneBook phoneBook = stub;
             Assert.AreEqual(0, phoneBook.GetContactPhoneNumber("John", "Smith"));
         }
@@ -167,7 +167,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestMethod_Void_WithNoParameters_DefaultBehavior_Loose()
         {
-            var stub = new StubITestInterface().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubITestInterface(MockBehavior.Loose);
             ITestInterface testInterface = stub;
             testInterface.DoSomething();
         }
@@ -175,7 +175,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestMethod_WithReturnType_IncludesOutParameter_MockBehavior_Loose()
         {
-            var stub = new StubIContainer().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubIContainer(MockBehavior.Loose);
             IContainer container = stub;
             object outParam;
             Assert.AreEqual(false, container.GetElement(1, out outParam));
@@ -185,7 +185,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestMethod_WithReturnType_IncludesRefParameter_MockBehavior_Loose()
         {
-            var stub = new StubIRefUtils().WithDefaultBehavior(MockBehavior.Loose);
+            var stub = new StubIRefUtils(MockBehavior.Loose);
             IRefUtils refUtils = stub;
             int i1 = 1;
             int i2 = 2;
@@ -197,8 +197,7 @@ namespace TestClassLibraryTest
         [TestMethod]
         public void TestThatLooseMockBehaviorsAreAlwaysOverwritten()
         {
-            var stub = new StubIPhoneBook()
-                .WithDefaultBehavior(MockBehavior.Loose)
+            var stub = new StubIPhoneBook(MockBehavior.Loose)
                 .GetContactPhoneNumber((p1, p2) => 12345678);
 
             IPhoneBook phoneBook = stub;
@@ -209,8 +208,7 @@ namespace TestClassLibraryTest
         [ExpectedException(typeof(SimpleStubsException))]
         public void TestThatExceptionIsThrownWhenMethodIsCalledMoreThanExpected_DefaultBehavior_Loose()
         {
-            var stub = new StubIPhoneBook()
-                .WithDefaultBehavior(MockBehavior.Loose)
+            var stub = new StubIPhoneBook(MockBehavior.Loose)
                 .GetContactPhoneNumber((p1, p2) => 12345678, Times.Once);
             IPhoneBook phoneBook = stub;
             phoneBook.GetContactPhoneNumber("John", "Smith");

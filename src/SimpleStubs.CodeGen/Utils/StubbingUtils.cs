@@ -18,7 +18,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             string returnStatement = returnsVoid ? string.Empty : "return ";
 
             statements.Add(SF.ParseStatement($"{delegateTypeName} del;\n"));
-            statements.Add(SF.ParseStatement("if (_mockBehavior == MockBehavior.Strict)"));
+            statements.Add(SF.ParseStatement("if (MockBehavior == MockBehavior.Strict)"));
             statements.Add(SF.Block(SF.ParseStatement($"del = _stubs.GetMethodStub<{delegateTypeName}>(\"{methodName}\");")));
             statements.Add(SF.ParseStatement("else"));
 
