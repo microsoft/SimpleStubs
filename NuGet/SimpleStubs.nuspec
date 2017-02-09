@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Etg.SimpleStubs</id>
-    <version>2.3.2</version>
+    <version>2.3.1</version>
     <title>SimpleStubs mocking framework</title>
     <authors>Microsoft Studios (BigPark)</authors>
     <owners>Microsoft Studios (BigPark)</owners>
@@ -15,6 +15,14 @@
   </metadata>
   
   <files>
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\uap10.0" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\netcore45" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\netcore50" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\dnxcore50" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\dotnet" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\net46" />
+	<file src="..\src\SimpleStubs\bin\Release\ETG.SimpleStubs.dll" target="lib\dotnet50" />
+  
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Engine.dll" target="tools" />
@@ -35,8 +43,6 @@
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Reflection.Metadata.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Newtonsoft.Json.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Autofac.dll" target="tools" />
-	
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.cs" target="content\Properties\Etg.SimpleStubs.cs" />
 	
 	<file src="..\Targets\Etg.SimpleStubs.targets" target="build" />
 	<file src="SimpleStubs.generated.cs" target="content\Properties\SimpleStubs.generated.cs" />
