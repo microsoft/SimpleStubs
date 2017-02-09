@@ -10,7 +10,7 @@ Once installed, SimpleStubs will create stubs for all interfaces (`public` inter
 
 The generated stubs will be added to the `Properties\SimpleStubs.generated.cs` file and compiled as part of the build process. Because the stubs are generated, modifying the stubs manually has no effect (if you really want to modify a stub, copy it to a different file).
 
-**Important note for UWP**: Because of a limitation in NuGet support for UWP (see discussion [here](https://github.com/NuGet/Home/wiki/Bringing-back-content-support,-September-24th,-2015)), the `Properties\SimpleStubs.generated.cs` file will not be automatically added to UWP projects and must be manually added (simply add the file to the `Properties` folder of your test project).
+**Important note for UWP**: Because of a limitation in NuGet support for UWP (see discussion [here](https://github.com/NuGet/Home/wiki/Bringing-back-content-support,-September-24th,-2015)), source files that are shipped with the NuGet do not get added to the `csproj`. To fix this, add all the `.cs` files in the `Properties` folder to your project.
 
 ## Api
 
