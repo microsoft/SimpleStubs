@@ -56,7 +56,8 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             }
             else if (returnType.MetadataName.Equals(taskType.MetadataName))
             {
-                return "return Task.CompletedTask;";
+                // do not use Task.CompletedTask to stay compatible with .Net 4.5
+                return "return Task.FromResult(true);";
             }
             else
             {
