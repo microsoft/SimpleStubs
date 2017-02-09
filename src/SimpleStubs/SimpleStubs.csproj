@@ -39,14 +39,10 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MockBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SequenceContainer.cs" />
-    <Compile Include="SequenceContainerException.cs" />
-    <Compile Include="SimpleStubsException.cs" />
-    <Compile Include="StubContainer.cs" />
-    <Compile Include="StubsUtils.cs" />
-    <Compile Include="Times.cs" />
+    <Compile Include="Etg.SimpleStubs.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
