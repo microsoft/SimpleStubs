@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -17,10 +16,11 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             var statements = new List<StatementSyntax>();
             string returnStatement = returnsVoid ? string.Empty : "return ";
 
-            statements.Add(SF.ParseStatement($"{delegateTypeName} del;\n"));
-            statements.Add(SF.ParseStatement("if (MockBehavior == MockBehavior.Strict)"));
-            statements.Add(SF.Block(SF.ParseStatement($"del = _stubs.GetMethodStub<{delegateTypeName}>(\"{methodName}\");")));
-            statements.Add(SF.ParseStatement("else"));
+            statements.Add(SF.ParseStatement($"{delegateTypeName} del;{System.Environment.NewLine}"));
+
+            // Prepare if/else block to determine how uninitialized stubs are handled.
+            var ifStrictExpression = SF.ParseExpression("MockBehavior == MockBehavior.Strict");
+            var ifStrictTrueSyntax = SF.Block(SF.ParseStatement($"del = _stubs.GetMethodStub<{delegateTypeName}>(\"{methodName}\");{System.Environment.NewLine}"));
 
             var defaultReturnInvocation = outParameters.Select(p =>
                 SF.ParseStatement($"{p.Name} = default ({p.Type.GetGenericName()});")).ToList();
@@ -31,15 +31,17 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             }
             else
             {
-                defaultReturnInvocation.Add(SF.ParseStatement("return;"));
+                defaultReturnInvocation.Add(SF.ParseStatement($"return;{System.Environment.NewLine}"));
             }
 
-            statements.Add(SF.Block(
-                SF.ParseStatement($"if (!_stubs.TryGetMethodStub<{delegateTypeName}>(\"{methodName}\", out del))"),
-                SF.Block(defaultReturnInvocation)
-            ));
+            var ifTryGetMethodStubExpression = SF.ParseExpression($"!_stubs.TryGetMethodStub<{delegateTypeName}>(\"{methodName}\", out del)");
 
-            statements.Add(SF.ParseStatement($"{returnStatement}del.Invoke({parameters});"));
+            var ifStrictFalseSyntax = SF.Block(SF.IfStatement(ifTryGetMethodStubExpression, SF.Block(defaultReturnInvocation)));
+            
+            statements.Add(SF.IfStatement(ifStrictExpression, ifStrictTrueSyntax, SF.ElseClause(ifStrictFalseSyntax)));
+
+            // Add default invocation.
+            statements.Add(SF.ParseStatement($"{returnStatement}del.Invoke({parameters});{System.Environment.NewLine}"));
 
             return SF.Block(statements.ToArray());
         }
@@ -52,16 +54,16 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             {
                 var namedReturnType = (INamedTypeSymbol) returnType;
                 var genericReturnType = namedReturnType.TypeArguments.First();
-                return $"return Task.FromResult(default({genericReturnType.GetGenericName()}));";
+                return $"return Task.FromResult(default({genericReturnType.GetGenericName()}));{System.Environment.NewLine}";
             }
             else if (returnType.MetadataName.Equals(taskType.MetadataName))
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
-                return "return Task.FromResult(true);";
+                return $"return Task.FromResult(true);{System.Environment.NewLine}";
             }
             else
             {
-                return $"return default({returnType.GetMinimallyQualifiedName()});";
+                return $"return default({returnType.GetMinimallyQualifiedName()});{System.Environment.NewLine}";
             }
         }
 

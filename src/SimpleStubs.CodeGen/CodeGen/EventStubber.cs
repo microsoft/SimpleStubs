@@ -28,17 +28,31 @@ namespace Etg.SimpleStubs.CodeGen
             classDclr = classDclr.AddMembers(eventDclr);
 
             string eventName = eventSymbol.Name;
-            ParameterSyntax[] parameters = GetEventParameters(eventSymbol);
-            string onEventArgs = "sender";
-            string eventTriggerArgs = "sender";
-            if (parameters.Count() == 2)
+
+            bool isCustomDelegateEvent = IsCustomDelegateBasedEvent(eventSymbol, semanticModel);
+            ParameterSyntax[] parameters = GetEventParameters(eventSymbol, isCustomDelegateEvent);
+            string onEventArgs;
+            string eventTriggerArgs;
+
+            if (isCustomDelegateEvent)
             {
-                onEventArgs += ", args";
-                eventTriggerArgs += ", args";
+                IMethodSymbol delegateInvokeMethodSymbol = ((INamedTypeSymbol)(eventSymbol.OriginalDefinition).Type).DelegateInvokeMethod;
+                onEventArgs = StubbingUtils.FormatParameters(delegateInvokeMethodSymbol);
+                eventTriggerArgs = onEventArgs;
             }
-            else if (parameters.Count() == 1)
+            else
             {
-                onEventArgs += ", null";
+                onEventArgs = "sender";
+                eventTriggerArgs = "sender";
+                if (parameters.Count() == 2)
+                {
+                    onEventArgs += ", args";
+                    eventTriggerArgs += ", args";
+                }
+                else if (parameters.Count() == 1)
+                {
+                    onEventArgs += ", null";
+                }
             }
 
             string eventType = GetEventType(eventSymbol);
@@ -69,17 +83,25 @@ namespace Etg.SimpleStubs.CodeGen
             return classDclr;
         }
 
-        private static ParameterSyntax[] GetEventParameters(IEventSymbol eventSymbol)
+        private static ParameterSyntax[] GetEventParameters(IEventSymbol eventSymbol, bool isCustomDelegateEvent)
         {
-            List<ParameterSyntax> parameters = new List<ParameterSyntax>
-            {
-                SF.Parameter(SF.Identifier("sender")).WithType(SF.ParseTypeName("object"))
-            };
+
+            var parameters = new List<ParameterSyntax>();
             INamedTypeSymbol type = (INamedTypeSymbol) (eventSymbol.Type);
-            if (type.TypeArguments.Any())
+
+            if (isCustomDelegateEvent)
             {
-                parameters.Add(SF.Parameter(SF.Identifier("args"))
-                    .WithType(SF.ParseTypeName(type.TypeArguments[0].Name)));
+                IMethodSymbol delegateInvokeMethodSymbol = ((INamedTypeSymbol)(eventSymbol.OriginalDefinition).Type).DelegateInvokeMethod;
+                parameters.AddRange(RoslynUtils.GetMethodParameterSyntaxList(delegateInvokeMethodSymbol).ToArray());
+            }
+            else
+            {
+                parameters.Add(SF.Parameter(SF.Identifier("sender")).WithType(SF.ParseTypeName("object")));
+                if (type.TypeArguments.Any())
+                {
+                    parameters.Add(SF.Parameter(SF.Identifier("args"))
+                        .WithType(SF.ParseTypeName(type.TypeArguments[0].Name)));
+                }
             }
 
             return parameters.ToArray();
@@ -99,6 +121,19 @@ namespace Etg.SimpleStubs.CodeGen
         private static string GetEventType(IEventSymbol eventSymbol)
         {
             return eventSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        }
+
+        private static bool IsCustomDelegateBasedEvent(IEventSymbol eventSymbol, SemanticModel semanticModel)
+        {
+            var genericEventType = semanticModel.Compilation.GetTypeByMetadataName("System.EventHandler`1");
+            var eventType = semanticModel.Compilation.GetTypeByMetadataName("System.EventHandler");
+
+            if (eventSymbol.Type.MetadataName.Equals(genericEventType.MetadataName) || eventSymbol.Type.MetadataName.Equals(eventType.MetadataName))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
