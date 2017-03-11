@@ -113,4 +113,11 @@ namespace TestClassLibrary
 
         void SetBoo<T, A>(T t, A a) where T : class, IDisposable, new() where A : new();
     }
+
+    public delegate void CustomDelegateBasedHandler(int arg1, string arg2, object arg3);
+
+    public interface ICustomDelegateBasedEventExample
+    {
+        event CustomDelegateBasedHandler CustomDelegateEventOccurred;
+    }
 }
