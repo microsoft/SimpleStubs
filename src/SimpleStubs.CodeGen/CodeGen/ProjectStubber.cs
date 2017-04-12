@@ -54,9 +54,9 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                     {
                         Trace.TraceError($"Could not generate stubs for interface {interfaceDclr}, Exception: {e}");
                     }
-                }
-                usings.AddRange(syntaxTree.GetCompilationUnitRoot().Usings.Select(@using => @using.Name.ToString()));
-            }
+				}
+				usings.AddRange(syntaxTree.GetCompilationUnitRoot().Usings.Where(@using => !@using.ChildTokens().Any(@token => token.IsKind(SyntaxKind.StaticKeyword))).Select(@using => @using.Name.ToString()));
+			}
 
             return new StubProjectResult(cu, usings);
         }
