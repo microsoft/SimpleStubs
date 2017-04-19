@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
+// used to test that static usings are handled correctly.
+using static System.String;
+
 namespace TestClassLibrary
 {
     public interface IAppConfigPeriodicRefreshHandler : IDisposable
