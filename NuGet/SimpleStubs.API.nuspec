@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Etg.SimpleStubs.API</id>
+    <version>1.0.0</version>
+    <title>SimpleStubs API</title>
+    <authors>Microsoft Studios (BigPark)</authors>
+    <owners>Microsoft Studios (BigPark)</owners>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SimpleStubs API is a set of classes used by the ETG.SimpleStubs NuGet package.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2016</copyright>
+	
+  </metadata>
+  
+  <files>
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\uap10.0" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netcoreapp1.0" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netcoreapp1.1" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dnxcore50" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dotnet" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\net46" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dotnet50" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.0" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.1" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.2" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.3" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.4" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.5" />
+	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.6" />
+  </files>
+</package>

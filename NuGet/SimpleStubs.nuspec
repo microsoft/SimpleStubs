@@ -12,24 +12,12 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
 	
+    <dependencies>
+        <dependency id="Etg.SimpleStubs.API" version="1.0.0" />
+    </dependencies>
   </metadata>
   
   <files>
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\uap10.0" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netcoreapp1.0" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netcoreapp1.1" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dnxcore50" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dotnet" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\net46" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\dotnet50" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.0" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.1" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.2" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.3" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.4" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.5" />
-	<file src="..\src\SimpleStubs\bin\Release\netstandard1.4\ETG.SimpleStubs.dll" target="lib\netstandard1.6" />
-  
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.dll" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Engine.dll" target="tools" />
