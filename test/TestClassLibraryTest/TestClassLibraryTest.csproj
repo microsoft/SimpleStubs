@@ -122,7 +122,7 @@
       <Name>SimpleStubs.CodeGen</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\SimpleStubs\SimpleStubs.csproj">
-      <Project>{c1aad08e-2a69-429c-8aff-142b468e0a8f}</Project>
+      <Project>{56be6aef-6db7-4fa6-89bb-b50c5dbbc675}</Project>
       <Name>SimpleStubs</Name>
     </ProjectReference>
     <ProjectReference Include="..\TestClassLibrary\TestClassLibrary.csproj">
