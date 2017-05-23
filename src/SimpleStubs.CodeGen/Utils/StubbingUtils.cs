@@ -54,7 +54,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             {
                 var namedReturnType = (INamedTypeSymbol) returnType;
                 var genericReturnType = namedReturnType.TypeArguments.First();
-                return $"return Task.FromResult(default({genericReturnType.GetGenericName()}));{System.Environment.NewLine}";
+                return $"return Task.FromResult(default({genericReturnType.GetFullyQualifiedName()}));{System.Environment.NewLine}";
             }
             else if (returnType.MetadataName.Equals(taskType.MetadataName))
             {
@@ -63,7 +63,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             }
             else
             {
-                return $"return default({returnType.GetMinimallyQualifiedName()});{System.Environment.NewLine}";
+                return $"return default({returnType.GetFullyQualifiedName()});{System.Environment.NewLine}";
             }
         }
 

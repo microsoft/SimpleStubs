@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 // used to test that static usings are handled correctly.
@@ -124,3 +123,31 @@ namespace TestClassLibrary
         event CustomDelegateBasedHandler CustomDelegateEventOccurred;
     }
 }
+
+//-------------------------------------------------------------------------------------------------------------
+// The following interfaces are used to test that same class name in different namespaces doesn't cause conflict.
+namespace A
+{
+    public interface IFoo
+    {
+        
+    }
+}
+
+namespace B
+{
+    public interface IFoo
+    {
+
+    }
+}
+
+namespace C
+{
+    public interface IBar
+    {
+        A.IFoo GetFoo();
+        void DoSomething(B.IFoo foo);
+    }
+}
+//-------------------------------------------------------------------------------------------------------------
