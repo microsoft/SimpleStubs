@@ -95,6 +95,11 @@ namespace TestClassLibrary
         T GetX();
     }
 
+    public interface IUpdatable<T> : IEquatable<T> where T : IUpdatable<T>
+    {
+        void Update(T newItem);
+    }
+
     public interface IGenericContainer<T>
     {
         T this[int index] { get; set; }

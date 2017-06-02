@@ -113,7 +113,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                     constraintSyntax = constraintSyntax.AddConstraints(SF.ClassOrStructConstraint(SyntaxKind.StructConstraint));
                 }
                 IEnumerable<TypeParameterConstraintSyntax> typeConstraints =
-                    typeParameter.ConstraintTypes.Select(symbol => SF.TypeConstraint(SF.IdentifierName(symbol.Name)));
+                    typeParameter.ConstraintTypes.Select(symbol => SF.TypeConstraint(SF.IdentifierName(symbol.GetFullyQualifiedName())));
                 constraintSyntax = constraintSyntax.AddConstraints(typeConstraints.ToArray());
 
                 if (typeParameter.HasConstructorConstraint)
