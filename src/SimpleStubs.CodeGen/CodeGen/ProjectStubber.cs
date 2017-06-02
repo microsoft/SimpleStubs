@@ -24,7 +24,7 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
 
         public async Task<StubProjectResult> StubProject(Project project, CompilationUnitSyntax cu)
         {
-            var usings = new List<string>();
+            var usings = new HashSet<UsingDirectiveSyntax>(new UsingDirectiveEqualityComparer());
             foreach (Document document in project.Documents)
             {
                 SyntaxTree syntaxTree = await document.GetSyntaxTreeAsync();
@@ -55,28 +55,11 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
                         Trace.TraceError($"Could not generate stubs for interface {interfaceDclr}, Exception: {e}");
                     }
 				}
-				CopyUsings(syntaxTree, usings);
+                usings.UnionWith(syntaxTree.GetCompilationUnitRoot().Usings.Select(
+                    usingDirective => usingDirective.WithLeadingTrivia(SyntaxTriviaList.Empty).WithTrailingTrivia(SyntaxTriviaList.Empty)));
 			}
 
             return new StubProjectResult(cu, usings);
-        }
-
-        private static void CopyUsings(SyntaxTree syntaxTree, List<string> usings)
-        {
-            foreach (UsingDirectiveSyntax usingDirectiveSyntax in syntaxTree.GetCompilationUnitRoot().Usings)
-            {
-                string usingName = usingDirectiveSyntax.Name.ToString();
-                if (IsStaticUsing(usingDirectiveSyntax))
-                {
-                    usingName = $"static {usingName}";
-                }
-                usings.Add(usingName);
-            }
-        }
-
-        private static bool IsStaticUsing(UsingDirectiveSyntax usingDirectiveSyntax)
-        {
-            return usingDirectiveSyntax.ChildTokens().Any(token => token.IsKind(SyntaxKind.StaticKeyword));
         }
 
         private bool SatisfiesVisibilityConstraints(InterfaceDeclarationSyntax i)

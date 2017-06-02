@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.Formatting;
 using System.Threading.Tasks;
@@ -39,10 +40,10 @@ namespace Etg.SimpleStubs.CodeGen
             }
 
             CompilationUnitSyntax cu = SF.CompilationUnit();
-            var usings = new HashSet<string>();
-            usings.Add("System");
-            usings.Add("System.Runtime.CompilerServices");
-            usings.Add("Etg.SimpleStubs");
+            var usings = new HashSet<UsingDirectiveSyntax>(new UsingDirectiveEqualityComparer());
+            usings.Add(ToUsingDirective(" System"));
+            usings.Add(ToUsingDirective(" System.Runtime.CompilerServices"));
+            usings.Add(ToUsingDirective(" Etg.SimpleStubs"));
 
             foreach (Project project in projectsToStub)
             {
@@ -51,8 +52,13 @@ namespace Etg.SimpleStubs.CodeGen
                 usings.UnionWith(res.Usings);
             }
 
-            cu = cu.AddUsings(usings.Select(@using => SF.UsingDirective(SF.IdentifierName(@using))).ToArray());
+            cu = cu.AddUsings(usings.ToArray());
             return Formatter.Format(cu, workspace).ToString();
+        }
+
+        UsingDirectiveSyntax ToUsingDirective(string nameSpace)
+        {
+            return SF.UsingDirective(SF.IdentifierName(nameSpace)).WithLeadingTrivia();
         }
 
         private List<Project> GetListOfProjectsToStub(MSBuildWorkspace workspace, Project currentProject)

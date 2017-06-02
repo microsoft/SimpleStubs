@@ -5,7 +5,7 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
 {
     internal class StubProjectResult
     {
-        public StubProjectResult(CompilationUnitSyntax cu, IEnumerable<string> usings)
+        public StubProjectResult(CompilationUnitSyntax cu, IEnumerable<UsingDirectiveSyntax> usings)
         {
             CompilationUnit = cu;
             Usings = usings;
@@ -13,6 +13,6 @@ namespace Etg.SimpleStubs.CodeGen.CodeGen
 
         public CompilationUnitSyntax CompilationUnit { get; }
 
-        public IEnumerable<string> Usings { get; }
+        public IEnumerable<UsingDirectiveSyntax> Usings { get; }
     }
 }

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 // used to test that static usings are handled correctly.
 using static System.String;
 
+using foo = System.String;
+
 namespace TestClassLibrary
 {
     public interface IAppConfigPeriodicRefreshHandler : IDisposable
