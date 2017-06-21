@@ -78,6 +78,8 @@ namespace TestClassLibrary
 
         event EventHandler OtherEvent;
 
+        event EventHandler<IEnumerable<string>> eventWihGenericArg;
+
         List<T> GetGenericList<T>();
 
         void SetGenericValue<T>(T value);

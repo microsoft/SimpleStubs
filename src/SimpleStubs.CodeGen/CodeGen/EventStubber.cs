@@ -91,7 +91,7 @@ namespace Etg.SimpleStubs.CodeGen
 
             if (isCustomDelegateEvent)
             {
-                IMethodSymbol delegateInvokeMethodSymbol = ((INamedTypeSymbol)(eventSymbol.OriginalDefinition).Type).DelegateInvokeMethod;
+                IMethodSymbol delegateInvokeMethodSymbol = ((INamedTypeSymbol)(eventSymbol).Type).DelegateInvokeMethod;
                 parameters.AddRange(RoslynUtils.GetMethodParameterSyntaxList(delegateInvokeMethodSymbol).ToArray());
             }
             else
@@ -100,7 +100,7 @@ namespace Etg.SimpleStubs.CodeGen
                 if (type.TypeArguments.Any())
                 {
                     parameters.Add(SF.Parameter(SF.Identifier("args"))
-                        .WithType(SF.ParseTypeName(type.TypeArguments[0].Name)));
+                        .WithType(SF.ParseTypeName(type.TypeArguments[0].GetFullyQualifiedName())));
                 }
             }
 
