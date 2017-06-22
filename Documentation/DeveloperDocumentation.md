@@ -25,6 +25,8 @@ When an interface is stubbed, the `InterfaceStubber` walks through all the metho
 
 The [test](https://github.com/Microsoft/SimpleStubs/tree/master/test) folder contains a class library project and a corresponding test project. The test project is setup in a way that it will invoke SimpleStubs with the current version of the `Etg.SimpleStubs.CodeGen.dll` that is available in the build directory (see [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/test/TestClassLibraryTest/Etg.SimpleStubs.targets)). This will allow developers to modify the SimpleStubs code and run the unit tests without having to re-generate the NuGet every time. One issue I noticed with this approach is that Visual Studio ends up locking the `Etg.SimpleStubs.CodeGen.dll` and it won't be updated during the build. When that happens, the only solution I am currently aware of is to restart visual studio.
 
-If you want to avoid dealing with dlls being locked or to debug SimpleStubs code generation, there is a test that has been added specifically for these purposes (see in `TestGenerateStubs` the [test class](https://github.com/Microsoft/SimpleStubs/blob/master/test/TestClassLibraryTest/StubGeneratorTest.cs)). Enable this test when needed (by removing the `[Ignore]` attribute) and it'll generate the stubs and write them to the same `SimpleStubs.generated.cs` file.
+## Debugging
+
+To debug SimpleStubs, use the `DebuggingConsoleApp` project. It's a simple console app that will generate stubs for all public interfaces in references projects (take a look at the `Main` method). This project is directly linked to the current SimpleStubs code in the solution, as a result, it'll allow you to debug your changes quite easily.
 
 
