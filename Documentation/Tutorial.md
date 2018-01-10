@@ -189,7 +189,8 @@ SimpleStubs also supports an optional configuration file that can be added to th
     ],
     "IgnoredInterfaces": [
         "MyNamespace.IFooInterface",
-        "MyNamespace.IBarInterface"
+        "MyNamespace.IBarInterface",
+        "MyNamespace.IGenericInterface<TK, TV>"
     ],
     "StubInternalInterfaces": false,
     "StubCurrentProject": false,
