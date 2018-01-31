@@ -8,9 +8,7 @@ To install SimpleStubs, simply install the `Etg.SimpleStubs` NuGet package to yo
 
 Once installed, SimpleStubs will create stubs for all interfaces (`public` interfaces and optionally `internal` interfaces) in all referenced projects. 
 
-The generated stubs will be added to the `Properties\SimpleStubs.generated.cs` file and compiled as part of the build process. Because the stubs are generated, modifying the stubs manually has no effect (if you really want to modify a stub, copy it to a different file).
-
-**Important note for UWP**: Because of a limitation in NuGet support for UWP (see discussion [here](https://github.com/NuGet/Home/wiki/Bringing-back-content-support,-September-24th,-2015)), the `Properties\SimpleStubs.generated.cs` file will not be automatically added to UWP projects and must be manually added (simply add the file to the `Properties` folder of your test project).
+The generated stubs will be automatically generated in the intermediate output path and compiled as part of the build process. Because the stubs are generated, modifying the stubs manually has no effect (if you really want to modify a stub, copy it to a different file).
 
 ## Api
 

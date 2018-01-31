@@ -2,10 +2,14 @@
   <UsingTask TaskName="Etg.SimpleStubs.CodeGen.Tasks.GenerateStubsTask" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\Etg.SimpleStubs.CodeGen.dll" />
   
   <PropertyGroup>
-	<SimpleStubsCodeGenBeforeTargets>BeforeBuild</SimpleStubsCodeGenBeforeTargets>
+	<SimpleStubsCodeGenBeforeTargets>CoreCompile</SimpleStubsCodeGenBeforeTargets>
+	<SimpleStubsCodeGenDependsOnTargets>ResolveReferences</SimpleStubsCodeGenDependsOnTargets>
+    <SimpleStubsCodeGenOutput Condition="'$(SimpleStubsCodeGenOutput) == ''">$(IntermediateOutputPath)SimpleStubs.generated.cs</SimpleStubsCodeGenOutput>
   </PropertyGroup>
   
-  <Target Name="SimpleStubsCodeGen" BeforeTargets="$(SimpleStubsCodeGenBeforeTargets)">
-    <GenerateStubsTask ProjectPath="$(ProjectDir)$(ProjectName)$(ProjectExt)" OutputPath="$(ProjectDir)Properties\SimpleStubs.generated.cs" />
+  <Target Name="SimpleStubsCodeGen" BeforeTargets="$(SimpleStubsCodeGenBeforeTargets)" DependsOnTargets="$(SimpleStubsCodeGenDependsOnTargets)">
+    <GenerateStubsTask ProjectPath="$(ProjectDir)$(ProjectName)$(ProjectExt)" OutputPath="$(SimpleStubsCodeGenOutput)" />
+  
+    <Compile Include="$(SimpleStubsCodeGenOutput)" />
   </Target>
 </Project>
