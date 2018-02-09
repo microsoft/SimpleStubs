@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-using Etg.SimpleStubs.CodeGen;
+using System.Reflection;
+using System.Text;
 using Etg.SimpleStubs.CodeGen.DI;
 
 namespace Etg.SimpleStubs.CodeGen
@@ -30,11 +31,37 @@ namespace Etg.SimpleStubs.CodeGen
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
             Console.WriteLine(DecorateMessage($"Generating stubs for project: {projectPath}"));
-            string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath).Result;
-            Console.WriteLine(DecorateMessage($"Writing stubs to file: {outputPath}"));
-            File.WriteAllText(outputPath, stubsCode);
 
-            return;
+            try
+            {
+                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath).Result;
+                Console.WriteLine(DecorateMessage($"Writing stubs to file: {outputPath}"));
+                File.WriteAllText(outputPath, stubsCode);
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (Exception exSub in ex.LoaderExceptions)
+                {
+                    sb.AppendLine(exSub.Message);
+                    FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
+                    if (exFileNotFound != null)
+                    {
+                        if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
+                        {
+                            sb.AppendLine("Fusion Log:");
+                            sb.AppendLine(exFileNotFound.FusionLog);
+                        }
+                    }
+                    sb.AppendLine();
+                }
+                string errorMessage = sb.ToString();
+                Console.WriteLine(DecorateMessage($"Failed to generate stubs: {errorMessage}"));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(DecorateMessage($"Failed to generate stubs: {e.ToString()}"));
+            }
         }
 
         private static string DecorateMessage(string message)
