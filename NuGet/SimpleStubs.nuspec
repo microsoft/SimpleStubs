@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Etg.SimpleStubs</id>
-    <version>2.3.4</version>
+    <version>2.4.0</version>
     <title>SimpleStubs mocking framework</title>
     <authors>Microsoft Studios (BigPark)</authors>
     <owners>Microsoft Studios (BigPark)</owners>
@@ -18,29 +18,11 @@
   </metadata>
   
   <files>
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Engine.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Framework.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Tasks.Core.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.Build.Utilities.Core.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.CodeAnalysis.CSharp.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.CodeAnalysis.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.CodeAnalysis.Workspaces.Desktop.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Microsoft.CodeAnalysis.Workspaces.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Collections.Immutable.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Composition.AttributedModel.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Composition.Convention.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Composition.Hosting.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Composition.Runtime.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Composition.TypedParts.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\System.Reflection.Metadata.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Newtonsoft.Json.dll" target="tools" />
-	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Autofac.dll" target="tools" />
+	<file src="..\src\SimpleStubs.CodeGen\bin\Release\**\*.dll" target="tools" />
+	<file src="..\src\SimpleStubs.CodeGen\bin\Release\**\*.config" target="tools" />
+	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.exe" target="tools" />
 	
 	<file src="..\Targets\Etg.SimpleStubs.targets" target="build" />
-	<file src="SimpleStubs.generated.cs" target="content\Properties\SimpleStubs.generated.cs" />
 	<file src="SimpleStubs.json" target="content\SimpleStubs.json" />
   </files>
 </package>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleStubs.CodeGen", "src\SimpleStubs.CodeGen\SimpleStubs.CodeGen.csproj", "{3E9C520A-94CF-46D0-864B-4293D439C92A}"
 EndProject
@@ -11,9 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClassLibraryTest", "tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleStubs.Test", "SimpleStubs.Test\SimpleStubs.Test.csproj", "{42D8B4EF-C779-4966-AF96-46F51E15C88E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleStubs", "src\SimpleStubs\SimpleStubs.csproj", "{56BE6AEF-6DB7-4FA6-89BB-B50C5DBBC675}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebuggingConsoleApp", "src\DebuggingConsoleApp\DebuggingConsoleApp.csproj", "{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleStubs", "src\SimpleStubs\SimpleStubs.csproj", "{56BE6AEF-6DB7-4FA6-89BB-B50C5DBBC675}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,24 +105,11 @@ Global
 		{56BE6AEF-6DB7-4FA6-89BB-B50C5DBBC675}.Release|x64.Build.0 = Release|Any CPU
 		{56BE6AEF-6DB7-4FA6-89BB-B50C5DBBC675}.Release|x86.ActiveCfg = Release|Any CPU
 		{56BE6AEF-6DB7-4FA6-89BB-B50C5DBBC675}.Release|x86.Build.0 = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|ARM.Build.0 = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|x64.Build.0 = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Debug|x86.Build.0 = Debug|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|ARM.ActiveCfg = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|ARM.Build.0 = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|x64.ActiveCfg = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|x64.Build.0 = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|x86.ActiveCfg = Release|Any CPU
-		{F5C20D8C-17DE-4E73-AF2A-BDED0D2E8138}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D89DE17-FFB0-4221-A07B-5C19176CC099}
 	EndGlobalSection
 EndGlobal

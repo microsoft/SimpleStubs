@@ -1,15 +1,26 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="Etg.SimpleStubs.CodeGen.Tasks.GenerateStubsTask" AssemblyFile="$(MSBuildThisFileDirectory)..\tools\Etg.SimpleStubs.CodeGen.dll" />
   
   <PropertyGroup>
-	<SimpleStubsCodeGenBeforeTargets>CoreCompile</SimpleStubsCodeGenBeforeTargets>
-	<SimpleStubsCodeGenDependsOnTargets>ResolveReferences</SimpleStubsCodeGenDependsOnTargets>
-    <SimpleStubsCodeGenOutput Condition="'$(SimpleStubsCodeGenOutput) == ''">$(IntermediateOutputPath)SimpleStubs.generated.cs</SimpleStubsCodeGenOutput>
+    <SimpleStubsCodeGenBeforeTargets>CoreCompile;XamlPreCompile</SimpleStubsCodeGenBeforeTargets>
+    <SimpleStubsCodeGenDependsOnTargets>ResolveReferences</SimpleStubsCodeGenDependsOnTargets>
+    <SimpleStubsCodeGenOutput Condition="'$(SimpleStubsCodeGenOutput)' == ''">$(IntermediateOutputPath)SimpleStubs.generated.cs</SimpleStubsCodeGenOutput>
+    <GenerateSimpleStubs Condition="'$(GenerateSimpleStubs)'==''">true</GenerateSimpleStubs>
   </PropertyGroup>
-  
-  <Target Name="SimpleStubsCodeGen" BeforeTargets="$(SimpleStubsCodeGenBeforeTargets)" DependsOnTargets="$(SimpleStubsCodeGenDependsOnTargets)">
-    <GenerateStubsTask ProjectPath="$(ProjectDir)$(ProjectName)$(ProjectExt)" OutputPath="$(SimpleStubsCodeGenOutput)" />
-  
-    <Compile Include="$(SimpleStubsCodeGenOutput)" />
+    
+  <!-- Don't generate code for design-time builds: '$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true' -->
+  <Target Name="SimpleStubsCodeGen" 
+    BeforeTargets="$(SimpleStubsCodeGenBeforeTargets)" 
+    DependsOnTargets="$(SimpleStubsCodeGenDependsOnTargets)"
+    Condition="('$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true') AND '$(GenerateSimpleStubs)'=='true'">
+      
+    <Exec
+      WorkingDirectory="$(ProjectDir)"
+      Command="$(MSBuildThisFileDirectory)\..\tools\Etg.SimpleStubs.CodeGen.exe -ProjectPath:&quot;$(ProjectDir)$(ProjectName).csproj'&quot; -OutputPath:&quot;$(SimpleStubsCodeGenOutput)&quot;" />
+    
+    <ItemGroup>
+      <Compile Include="$(SimpleStubsCodeGenOutput)" /> 
+    </ItemGroup>
+    
   </Target>
+  
 </Project>
