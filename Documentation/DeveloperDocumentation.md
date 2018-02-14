@@ -5,7 +5,7 @@ This document is targeted for developers who would like to understand and potent
 ## Build & Code Generation
 SimpleStubs used Roslyn to generate stubs. The code is generated during the build (right before the build actually). 
 
-When SimpleStubs NuGet package is installed to a given project, the [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/Targets/Etg.SimpleStubs.targets) file is installed and imported in the `ProjectName.nuget.targets` file (which gets added to the target project). The [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/Targets/Etg.SimpleStubs.targets) file contains a `BeforeBuild` task that executes the [GenerateStubsTask](https://github.com/Microsoft/SimpleStubs/blob/master/src/SimpleStubs.CodeGen/Tasks/GenerateStubsTask.cs) visual studio Task and writes the output to the `"$(IntermediateOutputPath)SimpleStubs.generated.cs"` file. This Task calls the [SimpleStubsGenerator](https://github.com/Microsoft/SimpleStubs/blob/master/src/SimpleStubs.CodeGen/CodeGen/SimpleStubsGenerator.cs) which walks through all dependent projects and generate corresponding stubs.
+When SimpleStubs NuGet package is installed to a given project, the [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/Targets/Etg.SimpleStubs.targets) file is installed and imported in the `ProjectName.nuget.targets` file (which gets added to the target project). The [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/Targets/Etg.SimpleStubs.targets) file contains the necessary MSBuild tasks needed to generate the stubs. These tasks basically invoke the `Etg.SimpleStubs.CodeGen.exe` and add the output to the `"$(IntermediateOutputPath)SimpleStubs.generated.cs"` file (the `$(IntermediateOutputPath)` is the `obj` folder).
 
 ## Method and Property Stubbers
 
@@ -23,10 +23,10 @@ When an interface is stubbed, the `InterfaceStubber` walks through all the metho
 
 ## Testing
 
-The [test](https://github.com/Microsoft/SimpleStubs/tree/master/test) folder contains a class library project and a corresponding test project. The test project is setup in a way that it will invoke SimpleStubs with the current version of the `Etg.SimpleStubs.CodeGen.dll` that is available in the build directory (see [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/test/TestClassLibraryTest/Etg.SimpleStubs.targets)). This will allow developers to modify the SimpleStubs code and run the unit tests without having to re-generate the NuGet every time. One issue I noticed with this approach is that Visual Studio ends up locking the `Etg.SimpleStubs.CodeGen.dll` and it won't be updated during the build. When that happens, the only solution I am currently aware of is to restart visual studio.
+The [test](https://github.com/Microsoft/SimpleStubs/tree/master/test) folder contains a class library project and a corresponding test project. The test project is setup in a way that it will invoke SimpleStubs with the current version of the `Etg.SimpleStubs.CodeGen.exe` that is available in the build directory (see [Etg.SimpleStubs.targets](https://github.com/Microsoft/SimpleStubs/blob/master/test/TestClassLibraryTest/Etg.SimpleStubs.targets)). This will allow developers to modify the SimpleStubs code and run the unit tests without having to re-generate the NuGet every time.
 
 ## Debugging
 
-To debug SimpleStubs, use the `DebuggingConsoleApp` project. It's a simple console app that will generate stubs for all public interfaces in references projects (take a look at the `Main` method). This project is directly linked to the current SimpleStubs code in the solution, as a result, it'll allow you to debug your changes quite easily.
+To debug SimpleStubs, simply run `SimpleStubs.CodeGen` console app with the appropriate parameters (`-ProjectPath` and `-OutputPath`).
 
 
