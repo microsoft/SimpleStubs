@@ -2,13 +2,14 @@
 <package >
   <metadata>
     <id>Etg.SimpleStubs</id>
-    <version>2.4.0</version>
-    <title>SimpleStubs mocking framework</title>
-    <authors>Microsoft Studios (BigPark)</authors>
-    <owners>Microsoft Studios (BigPark)</owners>
+    <version>2.4.1</version>
+    <title>SimpleStubs Mocking Framework (C#).</title>
+    <authors>Nehme Bilal</authors>
+    <owners>Microsoft</owners>
     <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+	<projectUrl>https://github.com/Microsoft/SimpleStubs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>SimpleStubs is a simple mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework. SimpleStubs is currently developed and maintained by Microsoft BigPark Studios in Vancouver.</description>
+    <description>SimpleStubs is a simple C# mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework.</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016</copyright>
 	
@@ -23,6 +24,5 @@
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.exe" target="tools" />
 	
 	<file src="..\Targets\Etg.SimpleStubs.targets" target="build" />
-	<file src="SimpleStubs.json" target="content\SimpleStubs.json" />
   </files>
 </package>

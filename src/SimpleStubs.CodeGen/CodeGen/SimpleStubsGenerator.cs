@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Etg.SimpleStubs.CodeGen.Config;
 using Etg.SimpleStubs.CodeGen.CodeGen;
+using System.Text;
 
 namespace Etg.SimpleStubs.CodeGen
 {
@@ -28,6 +29,17 @@ namespace Etg.SimpleStubs.CodeGen
         {
             MSBuildWorkspace workspace = MSBuildWorkspace.Create();
             Project currentProject = await workspace.OpenProjectAsync(testProjectPath);
+
+            if (workspace.Diagnostics.Any(d => d.Kind == WorkspaceDiagnosticKind.Failure))
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var diagnostic in workspace.Diagnostics)
+                {
+                    stringBuilder.AppendLine(diagnostic.ToString());
+                }
+                throw new Exception("Failed to open project, Errors: " + stringBuilder.ToString());
+            }
+            
             if (currentProject == null)
             {
                 throw new ArgumentException("Could not open the project located at " + testProjectPath);
