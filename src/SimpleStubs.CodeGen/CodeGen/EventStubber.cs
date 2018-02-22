@@ -33,12 +33,21 @@ namespace Etg.SimpleStubs.CodeGen
             ParameterSyntax[] parameters = GetEventParameters(eventSymbol, isCustomDelegateEvent);
             string onEventArgs;
             string eventTriggerArgs;
+            string methodReturnType = "void";
+            string customDelegateReturnType = "";
+            bool hasReturnType = false;
 
             if (isCustomDelegateEvent)
             {
                 IMethodSymbol delegateInvokeMethodSymbol = ((INamedTypeSymbol)(eventSymbol.OriginalDefinition).Type).DelegateInvokeMethod;
                 onEventArgs = StubbingUtils.FormatParameters(delegateInvokeMethodSymbol);
                 eventTriggerArgs = onEventArgs;
+                if (!delegateInvokeMethodSymbol.ReturnsVoid)
+                {
+                    hasReturnType = true;
+                    customDelegateReturnType = delegateInvokeMethodSymbol.ReturnType.GetFullyQualifiedName();
+                    methodReturnType = $"global::System.Collections.Generic.IEnumerable<{customDelegateReturnType}>";
+                }
             }
             else
             {
@@ -59,25 +68,46 @@ namespace Etg.SimpleStubs.CodeGen
             string onEventMethodName = "On_" + eventName;
 
             // Create OnEvent method
-            MethodDeclarationSyntax onEventMethodDclr = SF.MethodDeclaration(SF.ParseTypeName("void"), onEventMethodName)
+            BlockSyntax onEventMethodDclrBlock;
+            if (hasReturnType)
+            {
+                onEventMethodDclrBlock = SF.Block(
+                    SF.ParseStatement($"{eventType} handler = {eventName};\n"),
+                    SF.ParseStatement("if (handler == null) {{ yield break; }}\n"),
+                    SF.ParseStatement($"foreach (var listener in handler.GetInvocationList()){{ if (listener.DynamicInvoke({onEventArgs}) is {customDelegateReturnType} ret){{ yield return ret; }} }}"));
+            }
+            else
+            {
+                onEventMethodDclrBlock = SF.Block(
+                    SF.ParseStatement($"{eventType} handler = {eventName};\n"),
+                    SF.ParseStatement($"if (handler != null) {{ handler({onEventArgs}); }}\n"));
+            }
+
+            MethodDeclarationSyntax onEventMethodDclr = SF.MethodDeclaration(SF.ParseTypeName(methodReturnType), onEventMethodName)
                 .AddModifiers(SF.Token(SyntaxKind.ProtectedKeyword))
                 .AddParameterListParameters(parameters)
-                .WithBody(SF.Block(
-                    SF.ParseStatement($"{eventType} handler = {eventName};\n"),
-                    SF.ParseStatement($"if (handler != null) {{ handler({onEventArgs}); }}\n")
-                    ));
+                .WithBody(onEventMethodDclrBlock);
 
             classDclr = classDclr.AddMembers(onEventMethodDclr);
 
             // Create event trigger method
             string eventTriggerMethodName = eventName + "_Raise";
-            MethodDeclarationSyntax eventTriggerMethod = SF.MethodDeclaration(SF.ParseTypeName("void"),
+
+            BlockSyntax eventTriggerMethodBlock;
+            if (hasReturnType)
+            {
+                eventTriggerMethodBlock = SF.Block(SF.ParseStatement($"return {onEventMethodName}({eventTriggerArgs});\n"));
+            }
+            else
+            {
+                eventTriggerMethodBlock = SF.Block(SF.ParseStatement($"{onEventMethodName}({eventTriggerArgs});\n"));
+            }
+
+            MethodDeclarationSyntax eventTriggerMethod = SF.MethodDeclaration(SF.ParseTypeName(methodReturnType),
                 eventTriggerMethodName)
                 .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
                 .AddParameterListParameters(parameters)
-                .WithBody(SF.Block(
-                    SF.ParseStatement($"{onEventMethodName}({eventTriggerArgs});\n")
-                    ));
+                .WithBody(eventTriggerMethodBlock);
             classDclr = classDclr.AddMembers(eventTriggerMethod);
 
             return classDclr;

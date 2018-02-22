@@ -84,7 +84,7 @@ namespace TestClassLibrary
 
         void SetGenericValue<T>(T value);
     }
-
+    
     public interface IIgnoredInterface : IDisposable
     {
     }
@@ -126,10 +126,15 @@ namespace TestClassLibrary
     }
 
     public delegate void CustomDelegateBasedHandler(int arg1, string arg2, object arg3);
+    public delegate string CustomDelegateBasedHandlerWithReturnType(object sender, EventArgs eventArgs);
+    public delegate string CustomDelegateBasedHandlerWithReturnType<T>(T eventArgs);
 
     public interface ICustomDelegateBasedEventExample
     {
         event CustomDelegateBasedHandler CustomDelegateEventOccurred;
+
+        event CustomDelegateBasedHandlerWithReturnType CustomDelegateWithReturnTypeEventOccurred;
+        event CustomDelegateBasedHandlerWithReturnType<string> CustomDelegateWithReturnTypeWithParameterEventOccurred;
     }
 }
 
