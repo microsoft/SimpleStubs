@@ -214,5 +214,19 @@ namespace TestClassLibraryTest
             phoneBook.GetContactPhoneNumber("John", "Smith");
             phoneBook.GetContactPhoneNumber("John", "Smith");
         }
+
+        [TestMethod]
+        public void TestTupleParametersAndReturnType()
+        {
+            (float x, float y) coordinates = (0.0f, 0.0f);
+            var stub = new StubITestInterface()
+                .SetCoordinates((coords) => coordinates = coords)
+                .GetCoordinates(() => coordinates);
+
+            ITestInterface testInterface = (ITestInterface)stub;
+
+            testInterface.SetCoordinates((1.0f, 2.0f));
+            Assert.AreEqual((1.0f, 2.0f), coordinates);
+        }
     }
 }

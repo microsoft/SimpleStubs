@@ -83,6 +83,13 @@ namespace TestClassLibrary
         List<T> GetGenericList<T>();
 
         void SetGenericValue<T>(T value);
+
+        void SetCoordinates((float x, float y) coordinates);
+        (float x, float y) GetCoordinates();
+
+        List<(float x, float y)> GetTrajectory();
+
+        void SetTrajectory(List<(float x, float y)> coordinatesList);
     }
     
     public interface IIgnoredInterface : IDisposable
