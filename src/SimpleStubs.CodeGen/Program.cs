@@ -39,6 +39,13 @@ namespace Etg.SimpleStubs.CodeGen
                 return;
             }
 
+            string platform = parser.Arguments["-Platform"];
+            if (string.IsNullOrEmpty(platform))
+            {
+                Console.WriteLine(DecorateMessage($"Platform cannot be empty"));
+                return;
+            }
+
             DiModule diModule = new DiModule(projectPath, outputPath);
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
@@ -46,7 +53,7 @@ namespace Etg.SimpleStubs.CodeGen
 
             try
             {
-                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath, configuration).Result;
+                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath, configuration, platform).Result;
                 Console.WriteLine(DecorateMessage($"Writing stubs to file: {outputPath}"));
                 File.WriteAllText(outputPath, stubsCode);
             }

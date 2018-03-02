@@ -25,9 +25,12 @@ namespace Etg.SimpleStubs.CodeGen
             _config = config;
         }
 
-        public async Task<string> GenerateStubs(string testProjectPath, string configuration)
+        public async Task<string> GenerateStubs(string testProjectPath, string configuration, string platform)
         {
-            using (var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { { "Configuration", configuration } }))
+            using (var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> {
+                { "Configuration", configuration },
+                { "Platform", platform}
+            }))
             {
                 Project currentProject = await workspace.OpenProjectAsync(testProjectPath);
 
@@ -38,7 +41,7 @@ namespace Etg.SimpleStubs.CodeGen
                     {
                         stringBuilder.AppendLine(diagnostic.ToString());
                     }
-                    throw new Exception("Failed to open project, Errors: " + stringBuilder.ToString());
+                    Console.WriteLine("Simplestubs encountered errors when opening the workspace; Stubs will be generated only for projects that successfully opened. Errors: " + stringBuilder.ToString());
                 }
 
                 if (currentProject == null)
