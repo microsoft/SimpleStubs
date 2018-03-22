@@ -51,7 +51,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             var genericTaskType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
             var taskType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
             var asyncActionType = semanticModel.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncAction");
-            var asyncOperationType = semanticModel.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncOperation");
+            var asyncOperationType = semanticModel.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncOperation`1");
 
             if (returnType.MetadataName.Equals(genericTaskType.MetadataName))
             {
@@ -64,15 +64,16 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
                 return $"return Task.FromResult(true);{System.Environment.NewLine}";
             }
-            else if (returnType.MetadataName.Equals(asyncActionType))
+            else if (returnType.MetadataName.Equals(asyncActionType.MetadataName))
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
                 return $"return Task.FromResult(true).AsAsyncAction();{System.Environment.NewLine}";
             }
-            else if (returnType.MetadataName.Equals(asyncOperationType))
+            else if (returnType.MetadataName.Equals(asyncOperationType.MetadataName))
             {
-                // do not use Task.CompletedTask to stay compatible with .Net 4.5
-                return $"return Task.FromResult(true).AsAsyncOperation();{System.Environment.NewLine}";
+                var namedReturnType = (INamedTypeSymbol)returnType;
+                var genericReturnType = namedReturnType.TypeArguments.First();
+                return $"return Task.FromResult(default({genericReturnType.GetFullyQualifiedName()})).AsAsyncOperation();{System.Environment.NewLine}";
             }
             else
             {
