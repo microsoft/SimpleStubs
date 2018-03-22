@@ -8,7 +8,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
 {
     internal static class StubbingUtils
     {
-        public static BlockSyntax GetInvocationBlockSyntax(string delegateTypeName, string methodName, string parameters, 
+        public static BlockSyntax GetInvocationBlockSyntax(string delegateTypeName, string methodName, string parameters,
             IEnumerable<IParameterSymbol> outParameters, ITypeSymbol returnType, SemanticModel semanticModel)
         {
             var voidType = semanticModel.Compilation.GetTypeByMetadataName("System.Void");
@@ -37,7 +37,7 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             var ifTryGetMethodStubExpression = SF.ParseExpression($"!_stubs.TryGetMethodStub<{delegateTypeName}>(\"{methodName}\", out del)");
 
             var ifStrictFalseSyntax = SF.Block(SF.IfStatement(ifTryGetMethodStubExpression, SF.Block(defaultReturnInvocation)));
-            
+
             statements.Add(SF.IfStatement(ifStrictExpression, ifStrictTrueSyntax, SF.ElseClause(ifStrictFalseSyntax)));
 
             // Add default invocation.
@@ -50,6 +50,9 @@ namespace Etg.SimpleStubs.CodeGen.Utils
         {
             var genericTaskType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
             var taskType = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
+            var asyncActionType = semanticModel.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncAction");
+            var asyncOperationType = semanticModel.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncOperation`1");
+
             if (returnType.MetadataName.Equals(genericTaskType.MetadataName))
             {
                 var namedReturnType = (INamedTypeSymbol) returnType;
@@ -60,6 +63,17 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
                 return $"return Task.FromResult(true);{System.Environment.NewLine}";
+            }
+            else if (returnType.MetadataName.Equals(asyncActionType.MetadataName))
+            {
+                // do not use Task.CompletedTask to stay compatible with .Net 4.5
+                return $"return Task.FromResult(true).AsAsyncAction();{System.Environment.NewLine}";
+            }
+            else if (returnType.MetadataName.Equals(asyncOperationType.MetadataName))
+            {
+                var namedReturnType = (INamedTypeSymbol)returnType;
+                var genericReturnType = namedReturnType.TypeArguments.First();
+                return $"return Task.FromResult(default({genericReturnType.GetFullyQualifiedName()})).AsAsyncOperation();{System.Environment.NewLine}";
             }
             else
             {
