@@ -11,6 +11,7 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Etg.SimpleStubs.CodeGen.Config;
 using Etg.SimpleStubs.CodeGen.CodeGen;
 using System.Text;
+using Microsoft.Build.Locator;
 
 namespace Etg.SimpleStubs.CodeGen
 {
@@ -23,6 +24,8 @@ namespace Etg.SimpleStubs.CodeGen
         {
             _projectStubber = projectStubber;
             _config = config;
+
+            MSBuildLocator.RegisterDefaults();
         }
 
         public async Task<string> GenerateStubs(string testProjectPath, string configuration, string platform)
@@ -42,6 +45,10 @@ namespace Etg.SimpleStubs.CodeGen
                         stringBuilder.AppendLine(diagnostic.ToString());
                     }
                     Console.WriteLine("Simplestubs encountered errors when opening the workspace; Stubs will be generated only for projects that successfully opened. Errors: " + stringBuilder.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("MSBuildWorkspace loaded with no errors!");
                 }
 
                 if (currentProject == null)

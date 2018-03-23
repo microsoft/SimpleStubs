@@ -64,12 +64,12 @@ namespace Etg.SimpleStubs.CodeGen.Utils
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
                 return $"return Task.FromResult(true);{System.Environment.NewLine}";
             }
-            else if (returnType.MetadataName.Equals(asyncActionType.MetadataName))
+            else if (asyncActionType != null && returnType.MetadataName.Equals(asyncActionType.MetadataName))
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
                 return $"return Task.FromResult(true).AsAsyncAction();{System.Environment.NewLine}";
             }
-            else if (returnType.MetadataName.Equals(asyncOperationType.MetadataName))
+            else if (asyncOperationType != null && returnType.MetadataName.Equals(asyncOperationType.MetadataName))
             {
                 var namedReturnType = (INamedTypeSymbol)returnType;
                 var genericReturnType = namedReturnType.TypeArguments.First();
