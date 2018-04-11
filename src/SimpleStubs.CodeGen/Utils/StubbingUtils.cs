@@ -67,13 +67,13 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             else if (asyncActionType != null && returnType.MetadataName.Equals(asyncActionType.MetadataName))
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
-                return $"return Task.FromResult(true).AsAsyncAction();{System.Environment.NewLine}";
+                return $"return System.Threading.Tasks.Task.FromResult(true).AsAsyncAction();{System.Environment.NewLine}";
             }
             else if (asyncOperationType != null && returnType.MetadataName.Equals(asyncOperationType.MetadataName))
             {
                 var namedReturnType = (INamedTypeSymbol)returnType;
                 var genericReturnType = namedReturnType.TypeArguments.First();
-                return $"return Task.FromResult(default({genericReturnType.GetFullyQualifiedName()})).AsAsyncOperation();{System.Environment.NewLine}";
+                return $"return System.Threading.Tasks.Task.FromResult(default({genericReturnType.GetFullyQualifiedName()})).AsAsyncOperation();{System.Environment.NewLine}";
             }
             else
             {
