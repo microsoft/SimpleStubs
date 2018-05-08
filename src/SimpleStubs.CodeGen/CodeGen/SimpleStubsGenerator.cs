@@ -11,6 +11,7 @@ using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using Etg.SimpleStubs.CodeGen.Config;
 using Etg.SimpleStubs.CodeGen.CodeGen;
 using System.Text;
+using Microsoft.Build.Locator;
 
 namespace Etg.SimpleStubs.CodeGen
 {
@@ -23,49 +24,60 @@ namespace Etg.SimpleStubs.CodeGen
         {
             _projectStubber = projectStubber;
             _config = config;
+
+            MSBuildLocator.RegisterDefaults();
         }
 
-        public async Task<string> GenerateStubs(string testProjectPath)
+        public async Task<string> GenerateStubs(string testProjectPath, string configuration, string platform)
         {
-            MSBuildWorkspace workspace = MSBuildWorkspace.Create();
-            Project currentProject = await workspace.OpenProjectAsync(testProjectPath);
-
-            if (workspace.Diagnostics.Any(d => d.Kind == WorkspaceDiagnosticKind.Failure))
+            using (var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> {
+                { "Configuration", configuration },
+                { "Platform", platform}
+            }))
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var diagnostic in workspace.Diagnostics)
+                Project currentProject = await workspace.OpenProjectAsync(testProjectPath);
+
+                if (workspace.Diagnostics.Any(d => d.Kind == WorkspaceDiagnosticKind.Failure))
                 {
-                    stringBuilder.AppendLine(diagnostic.ToString());
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (var diagnostic in workspace.Diagnostics)
+                    {
+                        stringBuilder.AppendLine(diagnostic.ToString());
+                    }
+                    Console.WriteLine("Simplestubs encountered errors when opening the workspace; Stubs will be generated only for projects that successfully opened. Errors: " + stringBuilder.ToString());
                 }
-                throw new Exception("Failed to open project, Errors: " + stringBuilder.ToString());
-            }
-            
-            if (currentProject == null)
-            {
-                throw new ArgumentException("Could not open the project located at " + testProjectPath);
-            }
+                else
+                {
+                    Console.WriteLine("MSBuildWorkspace loaded with no errors!");
+                }
 
-            List<Project> projectsToStub = GetListOfProjectsToStub(workspace, currentProject);
-            if(!projectsToStub.Any())
-            {
-                return string.Empty;
+                if (currentProject == null)
+                {
+                    throw new ArgumentException("Could not open the project located at " + testProjectPath);
+                }
+
+                List<Project> projectsToStub = GetListOfProjectsToStub(workspace, currentProject);
+                if (!projectsToStub.Any())
+                {
+                    return string.Empty;
+                }
+
+                CompilationUnitSyntax cu = SF.CompilationUnit();
+                var usings = new HashSet<UsingDirectiveSyntax>(new UsingDirectiveEqualityComparer());
+                usings.Add(ToUsingDirective(" System"));
+                usings.Add(ToUsingDirective(" System.Runtime.CompilerServices"));
+                usings.Add(ToUsingDirective(" Etg.SimpleStubs"));
+
+                foreach (Project project in projectsToStub)
+                {
+                    var res = await _projectStubber.StubProject(project, cu);
+                    cu = res.CompilationUnit;
+                    usings.UnionWith(res.Usings);
+                }
+
+                cu = cu.AddUsings(usings.ToArray());
+                return Formatter.Format(cu, workspace).ToString();
             }
-
-            CompilationUnitSyntax cu = SF.CompilationUnit();
-            var usings = new HashSet<UsingDirectiveSyntax>(new UsingDirectiveEqualityComparer());
-            usings.Add(ToUsingDirective(" System"));
-            usings.Add(ToUsingDirective(" System.Runtime.CompilerServices"));
-            usings.Add(ToUsingDirective(" Etg.SimpleStubs"));
-
-            foreach (Project project in projectsToStub)
-            {
-                var res = await _projectStubber.StubProject(project, cu);
-                cu = res.CompilationUnit;
-                usings.UnionWith(res.Usings);
-            }
-
-            cu = cu.AddUsings(usings.ToArray());
-            return Formatter.Format(cu, workspace).ToString();
         }
 
         UsingDirectiveSyntax ToUsingDirective(string nameSpace)

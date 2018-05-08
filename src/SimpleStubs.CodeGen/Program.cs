@@ -16,6 +16,11 @@ namespace Etg.SimpleStubs.CodeGen
             string projectPath = parser.Arguments["-ProjectPath"];
             if (string.IsNullOrEmpty(projectPath) || !File.Exists(projectPath))
             {
+                Console.WriteLine(DecorateMessage($"ProjectPath cannot be empty"));
+                return;
+            }
+            if (!File.Exists(projectPath))
+            {
                 Console.WriteLine(DecorateMessage($"{projectPath} does not exist"));
                 return;
             }
@@ -23,7 +28,21 @@ namespace Etg.SimpleStubs.CodeGen
             string outputPath = parser.Arguments["-OutputPath"];
             if (string.IsNullOrEmpty(outputPath))
             {
-                Console.WriteLine(DecorateMessage($"{outputPath} cannot be empty"));
+                Console.WriteLine(DecorateMessage($"OutputPath cannot be empty"));
+                return;
+            }
+
+            string configuration = parser.Arguments["-Configuration"];
+            if (string.IsNullOrEmpty(configuration))
+            {
+                Console.WriteLine(DecorateMessage($"Configuration cannot be empty"));
+                return;
+            }
+
+            string platform = parser.Arguments["-Platform"];
+            if (string.IsNullOrEmpty(platform))
+            {
+                Console.WriteLine(DecorateMessage($"Platform cannot be empty"));
                 return;
             }
 
@@ -34,7 +53,7 @@ namespace Etg.SimpleStubs.CodeGen
 
             try
             {
-                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath).Result;
+                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath, configuration, platform).Result;
                 Console.WriteLine(DecorateMessage($"Writing stubs to file: {outputPath}"));
                 File.WriteAllText(outputPath, stubsCode);
             }
