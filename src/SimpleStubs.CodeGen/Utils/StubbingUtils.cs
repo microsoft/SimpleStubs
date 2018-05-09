@@ -57,12 +57,12 @@ namespace Etg.SimpleStubs.CodeGen.Utils
             {
                 var namedReturnType = (INamedTypeSymbol) returnType;
                 var genericReturnType = namedReturnType.TypeArguments.First();
-                return $"return Task.FromResult(default({genericReturnType.GetFullyQualifiedName()}));{System.Environment.NewLine}";
+                return $"return System.Threading.Tasks.Task.FromResult(default({genericReturnType.GetFullyQualifiedName()}));{System.Environment.NewLine}";
             }
             else if (returnType.MetadataName.Equals(taskType.MetadataName))
             {
                 // do not use Task.CompletedTask to stay compatible with .Net 4.5
-                return $"return Task.FromResult(true);{System.Environment.NewLine}";
+                return $"return System.Threading.Tasks.Task.FromResult(true);{System.Environment.NewLine}";
             }
             else if (asyncActionType != null && returnType.MetadataName.Equals(asyncActionType.MetadataName))
             {
