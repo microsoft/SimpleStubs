@@ -101,9 +101,16 @@ namespace TestClassLibrary
         void DoSomethingInternal();
     }
 
-    public interface IGenericInterface<T, A> where T : class, IDisposable, new() where A : struct
+    public interface IGenericInterface<T, A, B, C>
+        where T : class, IDisposable, new()
+        where A : struct
+        where B : struct, Enum
+        where C : Enum
     {
         T GetX();
+        A GetA();
+        B? GetB();
+        C GetC();
     }
 
     public interface IUpdatable<T> : IEquatable<T> where T : IUpdatable<T>
