@@ -217,6 +217,16 @@ If you have a solution composed of multiple projects, instead of installing Simp
 
 With this approach, each stub is generated only once and only when there are code changes.
 
+### Set location for generated file
+
+By default, SimpleStubs will generate an output file in the obj folder.
+If the *GeneratedStubs* project is referenced from another test project, Intellisense may not work.
+
+To resolve this, you can modify the location of the generated file to be included in the project root.
+Just add the following to the .csproj file:
+
+`<SimpleStubsCodeGenOutput>.\SimpleStubs.generated.cs</SimpleStubsCodeGenOutput>`
+
 ### Generate stubs for external interfaces
 
 By default, SimpleStubs ignores external interfaces because there can be too many of them to generate stubs for. One simple way of generating a stub for an external interface is to create an internal interface that inherits from it (you don't need to use the internal fake interface anywhere in the code). Because SimpleStubs handles inheritance, the generated stub can be used as a stub of the original external interface.
