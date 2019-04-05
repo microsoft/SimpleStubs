@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Etg.SimpleStubs</id>
-    <version>2.4.5</version>
+    <id>SimpleStubs</id>
+    <version>2.4.8</version>
     <title>SimpleStubs Mocking Framework (C#).</title>
     <authors>Nehme Bilal</authors>
-    <owners>Microsoft</owners>
-    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <owners>Nehme Bilal</owners>
+    <license type="expression">MIT</license>
 	<projectUrl>https://github.com/Microsoft/SimpleStubs</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>SimpleStubs is a simple C# mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework.</description>
@@ -14,7 +14,7 @@
     <copyright>Copyright 2016</copyright>
 	
     <dependencies>
-        <dependency id="Etg.SimpleStubs.API" version="1.0.0" />
+        <dependency id="SimpleStubs.API" version="1.0.0" />
     </dependencies>
   </metadata>
   
