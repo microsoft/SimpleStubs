@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SimpleStubs</id>
-    <version>2.4.8</version>
+    <version>2.4.8.2</version>
     <title>SimpleStubs Mocking Framework (C#).</title>
     <authors>Nehme Bilal</authors>
     <owners>Nehme Bilal</owners>
@@ -23,6 +23,6 @@
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\**\*.config" target="tools" />
 	<file src="..\src\SimpleStubs.CodeGen\bin\Release\Etg.SimpleStubs.CodeGen.exe" target="tools" />
 	
-	<file src="..\Targets\Etg.SimpleStubs.targets" target="build" />
+	<file src="..\Targets\SimpleStubs.targets" target="build" />
   </files>
 </package>
