@@ -3,7 +3,7 @@ SimpleStubs
 
 [![Join the chat at https://gitter.im/Microsoft/SimpleStubs](https://badges.gitter.im/Microsoft/SimpleStubs.svg)](https://gitter.im/Microsoft/SimpleStubs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build status](https://ci.appveyor.com/api/projects/status/wt0rjp0bkyk9l9gi?svg=true)](https://ci.appveyor.com/project/NehmeBilal/simplestubs)
-[![NuGet](https://img.shields.io/nuget/v/Etg.SimpleStubs.svg?style=flat)](https://www.nuget.org/packages/Etg.SimpleStubs/)
+[![NuGet](https://img.shields.io/nuget/v/Etg.SimpleStubs.svg?style=flat)](https://www.nuget.org/packages/SimpleStubs/)
 
 *SimpleStubs* is a simple mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework. SimpleStubs was developed and is maintained by Nehme Bilal, a software engineer at Microsoft Vancouver.
 
