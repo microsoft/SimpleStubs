@@ -15,7 +15,7 @@
       
     <Exec
       WorkingDirectory="$(ProjectDir)"
-      Command="..\..\src\SimpleStubs.CodeGen\bin\$(ConfigurationName)\Etg.SimpleStubs.CodeGen.exe -ProjectPath:&quot;$(ProjectDir)$(ProjectName).csproj'&quot; -OutputPath:&quot;$(SimpleStubsCodeGenOutput)&quot; -Configuration:&quot;$(Configuration)&quot; -Platform:&quot;$(Platform)&quot;" />
+      Command="..\..\src\SimpleStubs.CodeGen\bin\$(ConfigurationName)\Etg.SimpleStubs.CodeGen.exe -ProjectPath:&quot;$(ProjectDir)$(ProjectName).csproj'&quot; -OutputPath:&quot;$(SimpleStubsCodeGenOutput)&quot; -Configuration:&quot;$(Configuration)&quot; -Platform:&quot;$(Platform)&quot; -VisualStudioVersion:&quot;$(VisualStudioVersion)&quot;" />
     
     <ItemGroup>
       <Compile Include="$(SimpleStubsCodeGenOutput)" /> 

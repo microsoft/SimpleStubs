@@ -14,7 +14,7 @@ namespace Etg.SimpleStubs.CodeGen
             parser.Parse(args);
 
             string projectPath = parser.Arguments["-ProjectPath"];
-            if (string.IsNullOrEmpty(projectPath) || !File.Exists(projectPath))
+            if (string.IsNullOrEmpty(projectPath))
             {
                 Console.WriteLine(DecorateMessage($"ProjectPath cannot be empty"));
                 return;
@@ -46,6 +46,13 @@ namespace Etg.SimpleStubs.CodeGen
                 return;
             }
 
+            string visualStudioVersion = parser.Arguments["-VisualStudioVersion"];
+            if (string.IsNullOrWhiteSpace(visualStudioVersion))
+            {
+                Console.WriteLine(DecorateMessage($"VisualStudioVersion cannot be empty"));
+                return;
+            }
+
             DiModule diModule = new DiModule(projectPath, outputPath);
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
@@ -53,7 +60,7 @@ namespace Etg.SimpleStubs.CodeGen
 
             try
             {
-                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath, configuration, platform).Result;
+                string stubsCode = diModule.StubsGenerator.GenerateStubs(projectPath, configuration, platform, visualStudioVersion).Result;
                 Console.WriteLine(DecorateMessage($"Writing stubs to file: {outputPath}"));
                 File.WriteAllText(outputPath, stubsCode);
             }
