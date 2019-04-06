@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis.Formatting;
 using System.Threading.Tasks;
@@ -24,12 +23,12 @@ namespace Etg.SimpleStubs.CodeGen
         {
             _projectStubber = projectStubber;
             _config = config;
-
-            MSBuildLocator.RegisterDefaults();
         }
 
-        public async Task<string> GenerateStubs(string testProjectPath, string configuration, string platform)
+        public async Task<string> GenerateStubs(string testProjectPath, string configuration, string platform, string visualStudioVersion)
         {
+            RegisterVisualStudioInstance(visualStudioVersion);
+
             using (var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> {
                 { "Configuration", configuration },
                 { "Platform", platform}
@@ -78,6 +77,21 @@ namespace Etg.SimpleStubs.CodeGen
                 cu = cu.AddUsings(usings.ToArray());
                 return Formatter.Format(cu, workspace).ToString();
             }
+        }
+
+        private static void RegisterVisualStudioInstance(string visualStudioVersion)
+        {
+            string[] versionParts = visualStudioVersion.Split('.');
+            if (versionParts.Length < 1) throw new Exception($"VisualStudionVersion {visualStudioVersion} is invalid");
+            string versionPrefix = versionParts[0];
+
+            IEnumerable<VisualStudioInstance> vsInstances = MSBuildLocator.QueryVisualStudioInstances();
+            VisualStudioInstance currentInstance = vsInstances.FirstOrDefault(i => i.Version.ToString().StartsWith(versionPrefix));
+            if (currentInstance == null)
+            {
+                throw new Exception($"Could not find a visual studio instance that matches the version {visualStudioVersion}");
+            }
+            MSBuildLocator.RegisterInstance(currentInstance);
         }
 
         UsingDirectiveSyntax ToUsingDirective(string nameSpace)
