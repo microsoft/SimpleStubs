@@ -81,12 +81,11 @@ namespace Etg.SimpleStubs.CodeGen
 
         private static void RegisterVisualStudioInstance(string visualStudioVersion)
         {
-            string[] versionParts = visualStudioVersion.Split('.');
-            if (versionParts.Length < 1) throw new Exception($"VisualStudionVersion {visualStudioVersion} is invalid");
-            string versionPrefix = versionParts[0];
+            Version version = new Version(visualStudioVersion);
+            string major = version.Major.ToString();
 
             IEnumerable<VisualStudioInstance> vsInstances = MSBuildLocator.QueryVisualStudioInstances();
-            VisualStudioInstance currentInstance = vsInstances.FirstOrDefault(i => i.Version.ToString().StartsWith(versionPrefix));
+            VisualStudioInstance currentInstance = vsInstances.FirstOrDefault(i => i.Version.ToString().StartsWith(major));
             if (currentInstance == null)
             {
                 throw new Exception($"Could not find a visual studio instance that matches the version {visualStudioVersion}");
