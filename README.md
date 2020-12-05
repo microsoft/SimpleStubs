@@ -7,7 +7,7 @@ SimpleStubs
 
 *SimpleStubs* is a simple mocking framework that supports Universal Windows Platform (UWP), .NET Core and .NET framework. SimpleStubs was developed and is maintained by Nehme Bilal, a software engineer at Microsoft Vancouver.
 
-The framework can be installed to your test project using `Etg.SimpleStubs` NuGet package.
+The framework can be installed to your test project using [SimpleStubs NuGet package](https://www.nuget.org/packages/SimpleStubs/).
 
 Please read the documentation below to learn more about how to install and use SimpleStubs.
 
