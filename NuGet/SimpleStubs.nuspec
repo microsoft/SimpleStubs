@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SimpleStubs</id>
-    <version>2.4.8.2</version>
+    <version>2.4.8.3</version>
     <title>SimpleStubs Mocking Framework (C#).</title>
     <authors>Nehme Bilal</authors>
     <owners>Nehme Bilal</owners>
